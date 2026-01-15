@@ -12,14 +12,18 @@
         .ai-glow { box-shadow: 0 0 15px rgba(56, 189, 248, 0.4); }
         .typing-dot { animation: typing 1.4s infinite; }
         @keyframes typing { 0%, 100% { opacity: 0; } 50% { opacity: 1; } }
+        /* Custom scrollbar for chat */
+        #ai-messages::-webkit-scrollbar { width: 4px; }
+        #ai-messages::-webkit-scrollbar-track { background: transparent; }
+        #ai-messages::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
     </style>
 </head>
 <body class="min-h-screen p-4 md:p-8 circuit-bg flex flex-col items-center">
 
     <header class="w-full max-w-4xl flex justify-between items-center mb-6">
-        <h1 class="text-2xl font-bold text-sky-400">⚡ Circuit Lab <span class="text-xs font-normal text-slate-500 uppercase tracking-widest ml-2">AI Powered</span></h1>
+        <h1 class="text-2xl font-bold text-sky-400">⚡ Circuit Lab <span class="text-xs font-normal text-slate-500 uppercase tracking-widest ml-2">Advanced Edition</span></h1>
         <div class="flex gap-2">
-            <button onclick="toggleCheatSheet()" class="bg-amber-600 text-white font-bold py-1.5 px-3 rounded text-sm hover:bg-amber-500 transition-colors">CHEAT SHEET</button>
+            <button onclick="toggleCheatSheet()" class="bg-slate-700 text-white font-bold py-1.5 px-3 rounded text-sm hover:bg-slate-600 transition-colors border border-slate-600">CHEAT SHEET</button>
             <button onclick="toggleAIChat()" class="bg-sky-600 text-white font-bold py-1.5 px-3 rounded text-sm ai-glow hover:bg-sky-500 transition-colors">✨ AI ASSISTANT</button>
         </div>
     </header>
@@ -30,7 +34,7 @@
             
             <!-- Progress Bar -->
             <div class="w-full bg-slate-900 h-1.5 rounded-full mb-6 overflow-hidden">
-                <div id="progress-bar" class="bg-sky-500 h-full transition-all duration-500" style="width: 20%"></div>
+                <div id="progress-bar" class="bg-sky-500 h-full transition-all duration-500" style="width: 0%"></div>
             </div>
 
             <!-- Level Info -->
@@ -40,11 +44,11 @@
                         <h2 id="level-title" class="text-xl font-bold text-white mb-1">Level 1</h2>
                         <p id="level-instruction" class="text-slate-300 text-sm"></p>
                     </div>
-                    <button onclick="requestAIHint()" class="text-xs bg-slate-700 text-sky-400 px-2 py-1 rounded hover:bg-slate-600">✨ AI HINT</button>
+                    <button onclick="requestAIHint()" class="text-xs bg-slate-700 text-sky-400 px-2 py-1 rounded hover:bg-slate-600 border border-sky-900">✨ AI HINT</button>
                 </div>
 
                 <!-- Circuit Drawing -->
-                <div id="visual-area" class="bg-white rounded-lg p-6 mb-6 flex flex-col items-center justify-center border-2 border-slate-600 min-h-[200px]">
+                <div id="visual-area" class="bg-white rounded-lg p-6 mb-6 flex flex-col items-center justify-center border-2 border-slate-600 min-h-[220px]">
                     <!-- Circuit logic injected here -->
                 </div>
 
@@ -53,18 +57,18 @@
                     <div id="input-container" class="flex justify-center items-center gap-3">
                         <!-- Inputs injected here -->
                     </div>
-                    <button onclick="checkAnswer()" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3 rounded-lg transition-all shadow-lg">CHECK ANSWER</button>
+                    <button onclick="checkAnswer()" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3 rounded-lg transition-all shadow-lg">VERIFY CIRCUIT</button>
                 </div>
             </div>
 
             <!-- Victory Screen -->
             <div id="screen-victory" class="hidden text-center py-10">
-                <div class="mb-6 text-6xl">🏆</div>
-                <h2 class="text-3xl font-bold text-emerald-400 mb-2">Review Complete!</h2>
-                <p class="text-slate-300 mb-8">You've mastered the basics of current electricity.</p>
+                <div class="mb-6 text-6xl">🌟</div>
+                <h2 class="text-3xl font-bold text-emerald-400 mb-2">Master Status Achieved!</h2>
+                <p class="text-slate-300 mb-8 px-4">You've solved the most difficult problems from the Grade 9 review sheet.</p>
                 <div class="flex flex-col gap-3 max-w-xs mx-auto">
-                    <button onclick="generateAIPuzzle()" class="bg-sky-600 hover:bg-sky-500 text-white font-bold py-3 px-6 rounded-lg transition-all ai-glow">✨ GENERATE AI PUZZLE</button>
-                    <button onclick="location.reload()" class="text-slate-500 text-sm hover:underline">Restart Original Levels</button>
+                    <button onclick="generateAIPuzzle()" class="bg-sky-600 hover:bg-sky-500 text-white font-bold py-3 px-6 rounded-lg transition-all ai-glow">✨ GENERATE LEVEL 5+ AI PUZZLE</button>
+                    <button onclick="location.reload()" class="text-slate-500 text-sm hover:underline">Reset to Level 3 Challenges</button>
                 </div>
             </div>
         </main>
@@ -75,14 +79,14 @@
                 <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
                 ✨ Lab Assistant
             </div>
-            <div id="ai-messages" class="flex-1 overflow-y-auto p-4 space-y-4 text-sm scrollbar-hide">
+            <div id="ai-messages" class="flex-1 overflow-y-auto p-4 space-y-4 text-sm">
                 <div class="bg-slate-800 p-3 rounded-lg border-l-2 border-sky-500 text-slate-300">
-                    Hello! I'm your AI Lab Assistant. If you have questions about circuits or need a simpler explanation, just ask!
+                    I'm ready to help with complex circuit analysis. Ask me about $V = IR$, Parallel branches, or Level 4 concepts!
                 </div>
             </div>
             <div class="p-3 bg-slate-800 border-t border-slate-700">
                 <div class="flex gap-2">
-                    <input type="text" id="ai-input" placeholder="Ask about electricity..." class="bg-slate-700 text-white text-xs p-2 rounded flex-1 focus:outline-none focus:ring-1 focus:ring-sky-500">
+                    <input type="text" id="ai-input" placeholder="Ask a question..." class="bg-slate-700 text-white text-xs p-2 rounded flex-1 focus:outline-none focus:ring-1 focus:ring-sky-500">
                     <button onclick="sendChatMessage()" class="bg-sky-600 p-2 rounded hover:bg-sky-500">
                         <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
                     </button>
@@ -91,7 +95,7 @@
         </aside>
     </div>
 
-    <!-- Mobile AI Drawer (Hidden by default) -->
+    <!-- Mobile AI Drawer -->
     <div id="mobile-ai-drawer" class="fixed inset-0 z-[100] bg-black/80 lg:hidden hidden">
         <div class="absolute bottom-0 left-0 right-0 h-3/4 bg-slate-900 rounded-t-2xl flex flex-col p-4">
             <div class="flex justify-between items-center mb-4">
@@ -100,7 +104,7 @@
             </div>
             <div id="ai-messages-mobile" class="flex-1 overflow-y-auto space-y-4 text-sm pb-4"></div>
             <div class="flex gap-2">
-                <input type="text" id="ai-input-mobile" placeholder="Ask about electricity..." class="bg-slate-800 text-white text-sm p-3 rounded-xl flex-1 focus:outline-none">
+                <input type="text" id="ai-input-mobile" placeholder="Ask a question..." class="bg-slate-800 text-white text-sm p-3 rounded-xl flex-1 focus:outline-none">
                 <button onclick="sendChatMessage(true)" class="bg-sky-600 px-4 rounded-xl">Send</button>
             </div>
         </div>
@@ -112,11 +116,9 @@
             <div id="fb-header" class="p-4 text-center font-bold text-lg text-white"></div>
             <div class="p-6">
                 <p id="fb-text" class="text-slate-300 text-sm leading-relaxed mb-4"></p>
-                <div id="ai-explanation-box" class="hidden mb-4 p-3 bg-sky-900/20 border-l-2 border-sky-400 text-xs italic text-sky-200">
-                    <!-- AI simplified text -->
-                </div>
+                <div id="ai-explanation-box" class="hidden mb-4 p-3 bg-sky-900/20 border-l-2 border-sky-400 text-xs italic text-sky-200"></div>
                 <div class="flex flex-col gap-2">
-                    <button id="ai-explain-btn" onclick="askAISimpler()" class="w-full py-2 rounded font-bold text-sky-400 border border-sky-800 hover:bg-sky-900/30 text-xs">✨ ASK AI FOR SIMPLER EXPLANATION</button>
+                    <button id="ai-explain-btn" onclick="askAISimpler()" class="w-full py-2 rounded font-bold text-sky-400 border border-sky-800 hover:bg-sky-900/30 text-xs transition-all">✨ EXPLAIN THE PHYSICS</button>
                     <button id="fb-btn" class="w-full py-2 rounded font-bold text-white"></button>
                 </div>
             </div>
@@ -127,25 +129,27 @@
     <div id="cheat-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 modal-overlay">
         <div class="bg-slate-900 border border-slate-700 w-full max-w-md rounded-xl p-6 shadow-2xl overflow-y-auto max-h-[90vh]">
             <div class="flex justify-between mb-4 border-b border-slate-700 pb-2">
-                <h2 class="text-xl font-bold text-amber-400">Study Cheat Sheet</h2>
+                <h2 class="text-xl font-bold text-amber-400">Advanced Study Sheet</h2>
                 <button onclick="toggleCheatSheet()" class="text-slate-400 text-2xl">&times;</button>
             </div>
             <div class="space-y-6 text-sm">
                 <div>
-                    <p class="font-bold text-sky-400 mb-1">Ohm's Law: V = I × R</p>
-                    <p class="text-slate-400">Voltage (V) = Current (I) × Resistance (R)</p>
+                    <p class="font-bold text-sky-400 mb-1">Ohm's Law Triangle</p>
+                    <p class="text-slate-300">Voltage ($V$) = $I \times R$</p>
+                    <p class="text-slate-300">Current ($I$) = $V / R$</p>
+                    <p class="text-slate-300">Resistance ($R$) = $V / I$</p>
                 </div>
                 <div class="bg-slate-800 p-3 rounded border border-slate-700">
-                    <p class="font-bold text-yellow-500 mb-1">SERIES (One Loop)</p>
-                    <p>• <strong>Current</strong> is the SAME everywhere.</p>
-                    <p>• <strong>Voltage</strong> ADDS UP (Vt = V1 + V2).</p>
-                    <p>• <strong>Total Resistance</strong> adds up ($R_T = R_1 + R_2$).</p>
+                    <p class="font-bold text-yellow-500 mb-1">SERIES RULES (One Loop)</p>
+                    <p>• $I_T = I_1 = I_2$ (Same everywhere)</p>
+                    <p>• $V_T = V_1 + V_2$ (Voltage adds up)</p>
+                    <p>• $R_T = R_1 + R_2$ (Resistance adds up)</p>
                 </div>
                 <div class="bg-slate-800 p-3 rounded border border-slate-700">
-                    <p class="font-bold text-purple-500 mb-1">PARALLEL (Branches)</p>
-                    <p>• <strong>Voltage</strong> is the SAME on every branch.</p>
-                    <p>• <strong>Current</strong> ADDS UP ($I_T = I_1 + I_2$).</p>
-                    <p>• <strong>Total Resistance</strong> decreases as you add branches.</p>
+                    <p class="font-bold text-purple-500 mb-1">PARALLEL RULES (Branches)</p>
+                    <p>• $V_T = V_1 = V_2$ (Same on every branch)</p>
+                    <p>• $I_T = I_1 + I_2$ (Current adds up)</p>
+                    <p>• Adding branches <strong>decreases</strong> total resistance.</p>
                 </div>
             </div>
         </div>
@@ -153,12 +157,49 @@
 
     <script>
         const apiKey = "";
+        
+        // Challenging levels based on Level 3 and 4 of PDF
         const levels = [
-            { id: 1, title: "Level 1: Ohm's Law", instr: "V = 12V, I = 2A. Find Resistance (R).", solution: {r: 6}, explain: "R = V / I (12 ÷ 2 = 6Ω).", wrong: "Use R = V / I. Divide Voltage (12) by Current (2).", type: 'basic', val: {v: 12, i: 2, r: '?'}},
-            { id: 2, title: "Level 2: Series Current", instr: "One Loop. Battery = 4A. What is I at bulb 2?", solution: {i: 4}, explain: "In series, current is the same everywhere!", wrong: "In series, current doesn't split. It stays 4A.", type: 'series', val: {i: 4, i2: '?'}},
-            { id: 3, title: "Level 3: Series Voltage", instr: "Bulb 1 = 5V, Bulb 2 = 7V. Find Total Voltage (Vt).", solution: {vt: 12}, explain: "Voltages add up in series (5 + 7 = 12).", wrong: "Add the individual voltages to get the total battery voltage.", type: 'series', val: {v1: 5, v2: 7, vt: '?'}},
-            { id: 4, title: "Level 4: Parallel Voltage", instr: "Battery = 9V. Bulbs are parallel. What is V1?", solution: {v: 9}, explain: "In parallel, every branch gets full battery voltage.", wrong: "Voltage is constant across parallel branches.", type: 'parallel', val: {vt: 9, v1: '?'}},
-            { id: 5, title: "Level 5: Parallel Current", instr: "Branch 1 = 3A, Branch 2 = 2A. Find Total Current (It).", solution: {it: 5}, explain: "Current splits/adds in parallel (3 + 2 = 5).", wrong: "The total current is the sum of all branch currents.", type: 'parallel', val: {i1: 3, i2: 2, it: '?'}}
+            { 
+                id: 1, 
+                title: "Level 3 Challenge: 3-Branch Current", 
+                instr: "$I_T = 36A$. Branch 1 uses $12A$ and Branch 3 uses $6A$. Find Current in Branch 2 ($I_2$).", 
+                solution: {i2: 18}, 
+                explain: "In parallel circuits, $I_T = I_1 + I_2 + I_3$. So $36A - 12A - 6A = 18A$.", 
+                wrong: "Remember the Parallel Current Rule: All branch currents must add up to the total current ($36A$).", 
+                type: 'parallel-3', 
+                val: {it: 36, i1: 12, i3: 6, i2: '?'}
+            },
+            { 
+                id: 2, 
+                title: "Level 4 Challenge: High Voltage Ohm's Law", 
+                instr: "Battery = $220V$. A motor in this parallel circuit has a resistance of $11\Omega$. Find the current $I$ for this motor.", 
+                solution: {i: 20}, 
+                explain: "Using $I = V / R$. In parallel, the motor gets the full $220V$. $220 / 11 = 20A$.", 
+                wrong: "In parallel, every branch gets the full battery voltage ($220V$). Now use $I = V / R$.", 
+                type: 'basic', 
+                val: {v: 220, r: 11, i: '?'}
+            },
+            { 
+                id: 3, 
+                title: "Level 4 Challenge: Multi-Load Series", 
+                instr: "A series circuit has a $2V$ bulb and a $10V$ motor. If the battery is $20V$, find the missing voltage for bulb 4 ($V_4$).", 
+                solution: {v4: 8}, 
+                explain: "In series, $V_T = V_1 + V_2 + V_3$. $20V$ (Total) - $2V$ - $10V$ = $8V$.", 
+                wrong: "In series, all component voltages must add up to the battery total ($20V$).", 
+                type: 'series-3', 
+                val: {vt: 20, v1: 2, v2: 10, v4: '?'}
+            },
+            { 
+                id: 4, 
+                title: "Level 4+ Challenge: Specific Resistance", 
+                instr: "Total Voltage = $50V$. Current in Branch 1 is $10A$. Find the Resistance of Resistor 1 ($R_1$).", 
+                solution: {r1: 5}, 
+                explain: "In parallel, Branch 1 gets $50V$. Using $R = V / I$, we get $50 / 10 = 5\Omega$.", 
+                wrong: "Find the resistance using $R = V / I$. The voltage for Branch 1 is the same as the battery ($50V$).", 
+                type: 'parallel', 
+                val: {vt: 50, i1: 10, r1: '?'}
+            }
         ];
 
         let cur = 0;
@@ -183,7 +224,7 @@
                     const result = await response.json();
                     return result.candidates?.[0]?.content?.parts?.[0]?.text;
                 } catch (e) {
-                    if (i === 4) return "AI currently busy. Please try again in a moment.";
+                    if (i === 4) return "Connection timeout. Ensure you are online or try again.";
                     await new Promise(r => setTimeout(r, delay));
                     delay *= 2;
                 }
@@ -200,8 +241,8 @@
             const l = levels[cur];
             document.getElementById('level-title').innerText = l.title;
             document.getElementById('level-instruction').innerText = l.instr;
-            document.getElementById('progress-bar').style.width = `${((cur + 1) / levels.length) * 100}%`;
-            document.getElementById('input-container').innerHTML = `<input type="number" id="ans" class="bg-slate-700 text-white p-3 rounded-lg text-center w-24 border border-slate-600 outline-none focus:ring-2 focus:ring-sky-500" placeholder="?"> <span class="text-slate-500 font-bold">VAL</span>`;
+            document.getElementById('progress-bar').style.width = `${((cur + 1) / (levels.length)) * 100}%`;
+            document.getElementById('input-container').innerHTML = `<input type="number" id="ans" class="bg-slate-700 text-white p-3 rounded-lg text-center w-28 border border-slate-600 outline-none focus:ring-2 focus:ring-sky-500" placeholder="Value">`;
             draw(l);
         }
 
@@ -212,35 +253,42 @@
             if (l.type === 'basic') {
                 content += `
                     <div class="flex items-center gap-4 text-slate-900 font-mono text-xs">
-                        <div class="p-3 border-2 border-slate-400 bg-slate-100 rounded">🔋 BATTERY (${l.val.v}V)</div>
-                        <div class="h-0.5 w-12 bg-slate-400"></div>
-                        <div class="p-3 border-2 border-slate-400 bg-slate-100 rounded">💡 RESISTOR (${l.val.r}Ω)</div>
-                    </div>
-                    <div class="text-slate-400 text-xs italic">Current flowing: ${l.val.i}A</div>
-                `;
-            } else if (l.type === 'series') {
-                content += `
-                    <div class="flex items-center gap-4 text-slate-900 font-mono text-xs">
-                        <div class="p-3 border-2 border-slate-400 bg-slate-100 rounded">🔋 SOURCE</div>
-                        <div class="h-0.5 w-8 bg-slate-400"></div>
-                        <div class="p-3 border-2 border-slate-400 bg-slate-100 rounded">💡 B1 (${l.val.v1 || l.val.i}V/A)</div>
-                        <div class="h-0.5 w-8 bg-slate-400"></div>
-                        <div class="p-3 border-2 border-slate-400 bg-slate-100 rounded">💡 B2 (${l.val.v2 || l.val.i2}V/A)</div>
+                        <div class="p-3 border-2 border-slate-500 bg-slate-100 rounded">🔋 BATTERY (${l.val.v}V)</div>
+                        <div class="h-0.5 w-12 bg-slate-500"></div>
+                        <div class="p-3 border-2 border-slate-500 bg-slate-100 rounded">⚙️ MOTOR (${l.val.r || l.val.i} ${l.val.r ? 'Ω' : 'A'})</div>
                     </div>
                 `;
-            } else if (l.type === 'parallel') {
+            } else if (l.type === 'series-3') {
                 content += `
-                    <div class="relative flex flex-col items-center gap-4 text-slate-900 font-mono text-xs">
-                        <div class="p-3 border-2 border-slate-400 bg-slate-100 rounded z-10">🔋 SOURCE (${l.val.vt || ''}V)</div>
-                        <div class="flex gap-12">
+                    <div class="flex flex-wrap justify-center items-center gap-2 text-slate-900 font-mono text-[10px]">
+                        <div class="p-2 border-2 border-slate-500 bg-slate-100 rounded">🔋 ${l.val.vt}V</div>
+                        <div class="h-0.5 w-4 bg-slate-500"></div>
+                        <div class="p-2 border-2 border-slate-500 bg-slate-100 rounded">💡 B1:${l.val.v1}V</div>
+                        <div class="h-0.5 w-4 bg-slate-500"></div>
+                        <div class="p-2 border-2 border-slate-500 bg-slate-100 rounded">⚙️ M:${l.val.v2}V</div>
+                        <div class="h-0.5 w-4 bg-slate-500"></div>
+                        <div class="p-2 border-2 border-slate-500 bg-slate-100 rounded">💡 B4:?</div>
+                    </div>
+                `;
+            } else if (l.type.startsWith('parallel')) {
+                const is3 = l.type.includes('3');
+                content += `
+                    <div class="relative flex flex-col items-center gap-3 text-slate-900 font-mono text-[10px]">
+                        <div class="p-2 border-2 border-slate-500 bg-slate-100 rounded z-10 font-bold">🔋 SOURCE (${l.val.vt || l.val.it + 'A'})</div>
+                        <div class="flex gap-4">
                             <div class="flex flex-col items-center">
-                                <div class="w-0.5 h-6 bg-slate-400"></div>
-                                <div class="p-3 border-2 border-slate-400 bg-slate-100 rounded">💡 B1 (${l.val.v1 || l.val.i1}V/A)</div>
+                                <div class="w-0.5 h-4 bg-slate-500"></div>
+                                <div class="p-2 border-2 border-slate-500 bg-slate-100 rounded">💡 I1:${l.val.i1}A</div>
                             </div>
                             <div class="flex flex-col items-center">
-                                <div class="w-0.5 h-6 bg-slate-400"></div>
-                                <div class="p-3 border-2 border-slate-400 bg-slate-100 rounded">💡 B2 (${l.val.v2 || l.val.i2}V/A)</div>
+                                <div class="w-0.5 h-4 bg-slate-500"></div>
+                                <div class="p-2 border-2 border-slate-500 bg-slate-100 rounded">💡 I2:?</div>
                             </div>
+                            ${is3 ? `
+                            <div class="flex flex-col items-center">
+                                <div class="w-0.5 h-4 bg-slate-500"></div>
+                                <div class="p-2 border-2 border-slate-500 bg-slate-100 rounded">💡 I3:${l.val.i3}A</div>
+                            </div>` : ''}
                         </div>
                     </div>
                 `;
@@ -263,14 +311,14 @@
             modal.classList.remove('hidden');
             
             const header = document.getElementById('fb-header');
-            header.innerText = correct ? "CORRECT!" : "TRY AGAIN";
+            header.innerText = correct ? "PUZZLE SOLVED!" : "CALCULATION ERROR";
             header.className = `p-4 text-center font-bold text-lg text-white ${correct ? "bg-emerald-600" : "bg-rose-600"}`;
             
             document.getElementById('fb-text').innerText = correct ? l.explain : l.wrong;
             
             const btn = document.getElementById('fb-btn');
             btn.className = `w-full py-2 rounded font-bold text-white mt-2 ${correct ? "bg-emerald-600 hover:bg-emerald-500" : "bg-slate-700 hover:bg-slate-600"}`;
-            btn.innerText = correct ? "NEXT LEVEL" : "GOT IT";
+            btn.innerText = correct ? "NEXT TASK" : "RETRY";
             
             btn.onclick = () => {
                 modal.classList.add('hidden');
@@ -291,25 +339,24 @@
             const btn = document.getElementById('ai-explain-btn');
             const box = document.getElementById('ai-explanation-box');
             
-            btn.innerText = "✨ AI IS THINKING...";
+            btn.innerText = "✨ ANALYZING...";
             btn.disabled = true;
 
-            const prompt = `The user is stuck on this electricity puzzle: "${level.instr}". 
+            const prompt = `The user is stuck on this advanced electricity puzzle: "${level.instr}". 
                            The answer is ${Object.values(level.solution)[0]}. 
-                           Explain why this is the answer using a simple analogy (like water or people in a line) for a 9th grade student who is confused. Keep it short.`;
+                           Explain the physics rule (Series vs Parallel voltage/current) clearly for a smart 9th grade student. Do not ask them questions. Just provide a clear, one-paragraph explanation with the solution steps.`;
             
             const response = await callGemini(prompt);
             box.innerText = response;
             box.classList.remove('hidden');
-            btn.innerText = "✨ ASK AI FOR SIMPLER EXPLANATION";
-            btn.disabled = false;
+            btn.innerText = "✨ PHYSICS EXPLANATION GENERATED";
         }
 
         async function requestAIHint() {
             const l = levels[cur];
-            addMessage("AI", "Thinking of a hint...", "sky");
-            const prompt = `The student is on Level: ${l.title}. The instruction is: ${l.instr}. 
-                           Give them a very small hint to nudge them in the right direction without giving the answer away.`;
+            addMessage("AI", "Thinking of a logical nudge...", "sky");
+            const prompt = `The student is on Level: ${l.title}. Task: ${l.instr}. 
+                           Provide a single sentence hint pointing to the specific rule (e.g., 'In parallel, voltage stays the same'). Do not give the answer.`;
             const hint = await callGemini(prompt);
             addMessage("AI", hint, "sky");
         }
@@ -319,29 +366,27 @@
             isGenerating = true;
             const btn = event.target;
             const oldText = btn.innerText;
-            btn.innerText = "✨ GENERATING PUZZLE...";
+            btn.innerText = "✨ GENERATING LEVEL 5+...";
             
-            const prompt = `Generate a JSON object for a NEW electricity puzzle for a Grade 9 student. 
-                           Choose a random type (basic, series, or parallel). 
-                           Ensure the values follow Ohm's Law and Circuit Rules.
-                           Format: { "title": "AI Challenge", "instr": "Description", "solution": {"x": number}, "explain": "Short explanation", "wrong": "Hint", "type": "basic/series/parallel", "val": {object of numbers} }
+            const prompt = `Generate a JSON object for a CHALLENGING electricity puzzle (Grade 9 Level 4+). 
+                           Use high values like $220V$ or complex 3-branch parallel setups. 
+                           Format: { "title": "AI Advanced Master", "instr": "Description", "solution": {"x": number}, "explain": "Logic", "wrong": "Hint", "type": "parallel-3", "val": {it:30, i1:10, i3:10} }
                            Only return the raw JSON.`;
             
             try {
-                const response = await callGemini(prompt, "You are a puzzle generator. Return valid JSON only.");
+                const response = await callGemini(prompt, "You are an advanced physics puzzle generator. Return valid JSON only.");
                 const jsonStr = response.replace(/```json|```/g, '').trim();
                 const newPuzzle = JSON.parse(jsonStr);
                 
-                // Add to current levels and reset game view
                 levels.push(newPuzzle);
                 cur = levels.length - 1;
                 
                 document.getElementById('screen-victory').classList.add('hidden');
                 document.getElementById('screen-level').classList.remove('hidden');
                 loadLevel();
-                addMessage("AI", "I've created a custom challenge for you! Good luck.", "emerald");
+                addMessage("AI", "New master-level challenge loaded. Solve this if you can!", "emerald");
             } catch (e) {
-                addMessage("AI", "I had trouble generating that puzzle. Let's try again.", "rose");
+                addMessage("AI", "Calculation failed. Let's try once more.", "rose");
             } finally {
                 btn.innerText = oldText;
                 isGenerating = false;
@@ -357,7 +402,7 @@
             addMessage("You", text, "slate", isMobile);
             input.value = "";
 
-            const response = await callGemini(text, "You are a helpful science lab assistant for Grade 9 students studying Current Electricity. Keep answers brief and encouraging.");
+            const response = await callGemini(text, "You are a senior science lab assistant. Provide direct, factual answers about electricity. Avoid asking follow-up questions.");
             addMessage("AI", response, "sky", isMobile);
         }
 
@@ -365,12 +410,11 @@
             const containerId = isMobile ? 'ai-messages-mobile' : 'ai-messages';
             const container = document.getElementById(containerId);
             const div = document.createElement('div');
-            div.className = `p-3 rounded-lg border-l-2 border-${color}-500 ${sender === 'AI' ? 'bg-slate-800' : 'bg-slate-700'} text-xs`;
+            div.className = `p-3 rounded-lg border-l-2 border-${color}-500 ${sender === 'AI' ? 'bg-slate-800' : 'bg-slate-700'} text-xs mb-3`;
             div.innerHTML = `<strong class="text-${color}-400">${sender}:</strong> ${text}`;
             container.appendChild(div);
             container.scrollTop = container.scrollHeight;
             
-            // Mirror to desktop if on mobile or vice versa
             if (!isMobile) {
                 const mobileContainer = document.getElementById('ai-messages-mobile');
                 const mDiv = div.cloneNode(true);
