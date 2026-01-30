@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Grade 9 Science Exam Master</title>
+    <script src="https://unpkg.com/lucide@latest"></script>
     <style>
         :root {
             --bg-color: #121212;
@@ -15,6 +16,7 @@
             --bio-color: #00ff88;
             --astro-color: #bd00ff;
             --elec-color: #ffaa00;
+            --method-color: #ff0055;
             
             --current-glow: var(--chem-color); /* Dynamic variable */
         }
@@ -35,22 +37,21 @@
 
         .container {
             width: 100%;
-            max-width: 600px;
+            max-width: 1000px; /* Widened for visuals */
             background-color: var(--card-bg);
             border-radius: 25px;
             padding: 30px;
             position: relative;
-            overflow: hidden;
             /* The Glowing Border */
             box-shadow: 0 0 20px rgba(0,0,0,0.5), 0 0 0 2px var(--current-glow);
-            transition: box-shadow 0.4s ease;
+            transition: box-shadow 0.4s ease, max-width 0.4s ease;
         }
 
         h1, h2 { text-align: center; margin: 0 0 20px 0; font-weight: 800; letter-spacing: 1px; }
         h1 { background: linear-gradient(90deg, #fff, #aaa); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
 
         /* --- MENU SCREEN --- */
-        .menu-grid { display: grid; grid-template-columns: 1fr; gap: 20px; margin-top: 30px; }
+        .menu-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 30px; }
         
         .menu-btn {
             padding: 25px;
@@ -62,9 +63,10 @@
             transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             color: #1a1a2e;
             display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
-            gap: 15px;
+            gap: 10px;
             box-shadow: 0 5px 15px rgba(0,0,0,0.3);
             text-transform: uppercase;
         }
@@ -148,28 +150,64 @@
         }
         .next-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(255,255,255,0.3); }
 
-        /* Cheat Sheet Styling */
-        .cheat-grid { display: grid; gap: 20px; }
+        /* --- STUDY NOTES STYLING --- */
+        .cheat-grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); 
+            gap: 20px; 
+            margin-top: 20px;
+            max-height: 70vh;
+            overflow-y: auto;
+            padding-right: 5px;
+        }
+        
+        .cheat-grid::-webkit-scrollbar { width: 8px; }
+        .cheat-grid::-webkit-scrollbar-track { background: rgba(0,0,0,0.2); }
+        .cheat-grid::-webkit-scrollbar-thumb { background: #555; border-radius: 4px; }
+
         .fact-card {
             background: rgba(255,255,255,0.05);
             padding: 20px;
             border-radius: 15px;
             border-top: 4px solid #666;
             transition: transform 0.2s;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            backdrop-filter: blur(10px);
         }
         .fact-card:hover { transform: translateY(-3px); background: rgba(255,255,255,0.08); }
+        .span-2 { grid-column: span 2; }
+        @media (max-width: 768px) { .span-2 { grid-column: span 1; } }
         
-        .fact-header { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; color: white; }
-        .fact-icon { font-size: 1.5rem; }
+        .fact-header { 
+            display: flex; align-items: center; gap: 10px; 
+            border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px; margin-bottom: 5px;
+        }
+        .fact-header h3 { margin: 0; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px; }
         
-        .formula-box {
-            background: rgba(0,0,0,0.3);
-            padding: 10px;
-            border-radius: 8px;
-            font-family: monospace;
-            text-align: center;
-            margin: 5px 0;
-            border: 1px dashed rgba(255,255,255,0.2);
+        .fact-content p { font-size: 0.85rem; line-height: 1.5; margin: 5px 0; color: #ddd; }
+        .fact-content strong { color: white; }
+
+        /* VISUAL ELEMENTS */
+        .formula-triangle { width: 100px; height: 90px; margin: 0 auto 10px auto; display: block; }
+        .formula-triangle text { font-family: sans-serif; font-weight: bold; }
+        
+        .phase-visual { display: flex; justify-content: space-around; align-items: center; margin-top: 10px; position: relative; }
+        .phase-node { 
+            width: 60px; height: 60px; border-radius: 50%; 
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            font-size: 0.7rem; font-weight: bold; text-transform: uppercase;
+            border: 2px solid rgba(255,255,255,0.2); background: rgba(0,0,0,0.3);
+            position: relative; z-index: 2;
+        }
+        .phase-arrow { position: absolute; height: 2px; background: rgba(255,255,255,0.2); top: 30px; z-index: 1; width: 100%; }
+
+        .moon-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 10px; }
+        .moon-item { text-align: center; font-size: 0.65rem; color: #aaa; }
+        .moon-circle { 
+            width: 30px; height: 30px; border-radius: 50%; background: #333; margin: 0 auto 5px auto;
+            box-shadow: inset -2px -2px 5px rgba(0,0,0,0.5); border: 1px solid #555;
         }
 
         .back-btn {
@@ -196,53 +234,131 @@
         
         <div class="menu-grid">
             <button class="menu-btn btn-study" onclick="showScreen('screen-study')">
-                <span>📖</span> Study Notes
+                <i data-lucide="book-open" size="32"></i>
+                <span>Study Visuals</span>
             </button>
             <button class="menu-btn btn-game" onclick="startGame()">
-                <span>🚀</span> Start Game
+                <i data-lucide="gamepad-2" size="32"></i>
+                <span>Start Game</span>
             </button>
         </div>
+        <p style="text-align:center; margin-top: 30px; font-size:0.8rem; color:#666;">Covers: Chem, Bio, Space, Elec</p>
     </div>
 
-    <!-- STUDY SCREEN -->
+    <!-- STUDY SCREEN (Cheat Sheet) -->
     <div id="screen-study" class="hidden">
-        <button class="back-btn" onclick="showScreen('screen-menu')">← Main Menu</button>
-        <h2>Cheat Codes</h2>
+        <div class="hud">
+            <button class="back-btn" onclick="showScreen('screen-menu')"><i data-lucide="arrow-left"></i> Back to Menu</button>
+            <span style="font-weight:bold; color:white;">VISUAL REFERENCE</span>
+        </div>
+        
         <div class="cheat-grid">
+            
+            <!-- Chemistry: Density Triangle -->
             <div class="fact-card" style="border-color: var(--chem-color);">
-                <div class="fact-header"><span class="fact-icon">🧪</span> <h3>Chemistry</h3></div>
-                <div class="formula-box">D = m ÷ V</div>
-                <p><strong>Sink or Float?</strong> If Density > 1.0, it sinks!</p>
-                <p><strong>Change:</strong> Rust = Chemical. Melting = Physical.</p>
+                <div class="fact-header" style="color: var(--chem-color);">
+                    <i data-lucide="beaker"></i> <h3>Density Triangle</h3>
+                </div>
+                <div class="fact-content" style="text-align:center;">
+                    <svg viewBox="0 0 100 87" class="formula-triangle">
+                        <path d="M50 0 L100 87 L0 87 Z" fill="rgba(0, 242, 255, 0.1)" stroke="var(--chem-color)" stroke-width="2"/>
+                        <line x1="0" y1="43.5" x2="100" y2="43.5" stroke="var(--chem-color)" stroke-width="2"/>
+                        <line x1="50" y1="43.5" x2="50" y2="87" stroke="var(--chem-color)" stroke-width="2"/>
+                        <text x="50" y="30" text-anchor="middle" fill="white" font-size="12">M</text>
+                        <text x="25" y="70" text-anchor="middle" fill="white" font-size="12">D</text>
+                        <text x="75" y="70" text-anchor="middle" fill="white" font-size="12">V</text>
+                    </svg>
+                    <p>Cover the letter you want to find.<br><strong>Mass = D × V</strong></p>
+                </div>
+            </div>
+
+            <!-- Electricity: Ohm's Law -->
+            <div class="fact-card" style="border-color: var(--elec-color);">
+                <div class="fact-header" style="color: var(--elec-color);">
+                    <i data-lucide="zap"></i> <h3>Ohm's Law</h3>
+                </div>
+                <div class="fact-content" style="text-align:center;">
+                    <svg viewBox="0 0 100 87" class="formula-triangle">
+                        <path d="M50 0 L100 87 L0 87 Z" fill="rgba(255, 170, 0, 0.1)" stroke="var(--elec-color)" stroke-width="2"/>
+                        <line x1="0" y1="43.5" x2="100" y2="43.5" stroke="var(--elec-color)" stroke-width="2"/>
+                        <line x1="50" y1="43.5" x2="50" y2="87" stroke="var(--elec-color)" stroke-width="2"/>
+                        <text x="50" y="30" text-anchor="middle" fill="white" font-size="12">V</text>
+                        <text x="25" y="70" text-anchor="middle" fill="white" font-size="12">I</text>
+                        <text x="75" y="70" text-anchor="middle" fill="white" font-size="12">R</text>
+                    </svg>
+                    <p><strong>V = I × R</strong><br>I = Current (Amps)</p>
+                </div>
             </div>
             
+            <!-- Phase Changes (Wide) -->
+            <div class="fact-card span-2" style="border-color: #0ea5e9;">
+                <div class="fact-header" style="color: #0ea5e9;">
+                    <i data-lucide="thermometer"></i> <h3>Phase Changes</h3>
+                </div>
+                <div class="fact-content">
+                    <div class="phase-visual">
+                        <div class="phase-arrow"></div>
+                        <div class="phase-node" style="border-color: #ff0055;">SOLID<br><i data-lucide="box" size="14"></i></div>
+                        <div class="phase-node" style="border-color: #00f2ff;">LIQUID<br><i data-lucide="droplets" size="14"></i></div>
+                        <div class="phase-node" style="border-color: #00ff88;">GAS<br><i data-lucide="wind" size="14"></i></div>
+                    </div>
+                    <div style="display:flex; justify-content:space-between; font-size:0.75rem; margin-top:5px; color:#aaa;">
+                        <span>Melting ➔</span>
+                        <span>Evap ➔</span>
+                    </div>
+                     <div style="display:flex; justify-content:space-between; font-size:0.75rem; color:#aaa;">
+                        <span>Freeze 🠔</span>
+                        <span>Condense 🠔</span>
+                    </div>
+                    <p style="text-align:center; margin-top:10px; border-top:1px solid #333; paddingTop:5px;"><strong>Sublimation:</strong> Solid ➔ Gas directly (Dry Ice).</p>
+                </div>
+            </div>
+
+            <!-- Biology -->
             <div class="fact-card" style="border-color: var(--bio-color);">
-                <div class="fact-header"><span class="fact-icon">🦠</span> <h3>Biology</h3></div>
-                <p><strong>Mitochondria:</strong> The Battery/Powerhouse.</p>
-                <p><strong>Nucleus:</strong> The Brain/Control.</p>
-                <p><strong>Plants:</strong> Have a Wall 🧱 & Chloroplasts ☀️.</p>
+                <div class="fact-header" style="color: var(--bio-color);">
+                    <i data-lucide="microscope"></i> <h3>Biology: Cells</h3>
+                </div>
+                <div class="fact-content">
+                    <p><strong>Mitochondria:</strong> Powerhouse (Energy).</p>
+                    <p><strong>Nucleus:</strong> Brain (DNA/Control).</p>
+                    <p><strong>Plants Only:</strong><br>1. Cell Wall (Structure)<br>2. Chloroplasts (Green/Sun)</p>
+                </div>
             </div>
 
-            <div class="fact-card" style="border-color: var(--elec-color);">
-                <div class="fact-header"><span class="fact-icon">⚡</span> <h3>Electricity</h3></div>
-                <div class="formula-box">V = I × R</div>
-                <p><strong>Series:</strong> One path (All break if one breaks).</p>
-                <p><strong>Insulator:</strong> Stops flow (Rubber, Glass).</p>
+            <!-- Astronomy: Moon Phases (Wide) -->
+            <div class="fact-card span-2" style="border-color: var(--astro-color);">
+                <div class="fact-header" style="color: var(--astro-color);">
+                    <i data-lucide="moon"></i> <h3>Moon Phases</h3>
+                </div>
+                <div class="moon-grid">
+                    <div class="moon-item"><div class="moon-circle" style="background: #111;"></div>New</div>
+                    <div class="moon-item"><div class="moon-circle" style="background: linear-gradient(90deg, #111 50%, #fff 50%);"></div>1st Qtr</div>
+                    <div class="moon-item"><div class="moon-circle" style="background: #fff; box-shadow: 0 0 10px white;"></div>Full</div>
+                    <div class="moon-item"><div class="moon-circle" style="background: linear-gradient(90deg, #fff 50%, #111 50%);"></div>3rd Qtr</div>
+                </div>
+                <p style="text-align:center; font-size:0.8rem; margin-top:5px;"><strong>Waxing:</strong> Getting brighter (Right side lit). <strong>Waning:</strong> Getting darker.</p>
             </div>
 
-            <div class="fact-card" style="border-color: var(--astro-color);">
-                <div class="fact-header"><span class="fact-icon">🪐</span> <h3>Astronomy</h3></div>
-                <p><strong>Jupiter:</strong> King of planets (Largest).</p>
-                <p><strong>Rotation:</strong> Day & Night (24h).</p>
-                <p><strong>Revolution:</strong> Seasons/Year (365d).</p>
+            <!-- Scientific Method -->
+            <div class="fact-card" style="border-color: var(--method-color);">
+                <div class="fact-header" style="color: var(--method-color);">
+                    <i data-lucide="flask-conical"></i> <h3>Method</h3>
+                </div>
+                <div class="fact-content">
+                    <p><strong>Hypothesis:</strong> "If... Then..."</p>
+                    <p><strong>Independent Var:</strong> What YOU change.</p>
+                    <p><strong>Dependent Var:</strong> What you MEASURE.</p>
+                </div>
             </div>
+
         </div>
     </div>
 
     <!-- GAME SCREEN -->
     <div id="screen-game" class="hidden">
         <div class="hud">
-            <button class="back-btn" onclick="showScreen('screen-menu')" style="margin:0;">✕ Quit</button>
+            <button class="back-btn" onclick="showScreen('screen-menu')" style="margin:0;"><i data-lucide="x"></i> Quit</button>
             <span class="score-pill" id="score-display">XP: 0</span>
         </div>
         
@@ -267,12 +383,15 @@
 </div>
 
 <script>
+    // Initialize Icons
+    lucide.createIcons();
+
     // --- VISUAL CONFIGURATION ---
     const THEMES = {
-        'Chemistry': { color: '#00f2ff', icon: '🧪' },
-        'Biology': { color: '#00ff88', icon: '🦠' },
-        'Astronomy': { color: '#bd00ff', icon: '🪐' },
-        'Electricity': { color: '#ffaa00', icon: '⚡' }
+        'Chemistry': { color: '#00f2ff', icon: 'beaker' },
+        'Biology': { color: '#00ff88', icon: 'microscope' },
+        'Astronomy': { color: '#bd00ff', icon: 'rocket' },
+        'Electricity': { color: '#ffaa00', icon: 'zap' }
     };
 
     // --- QUESTION BANK ---
@@ -281,11 +400,13 @@
         { unit: "Chemistry", q: "Mass = 50g, Vol = 10cm³. Density?", options: ["5 g/cm³", "500 g/cm³", "0.2 g/cm³", "100 g/cm³"], ans: "5 g/cm³", reason: "Formula: D = M ÷ V" },
         { unit: "Chemistry", q: "Dry Ice turning to smoke is:", options: ["Sublimation", "Melting", "Evaporation", "Freezing"], ans: "Sublimation", reason: "Solid ➔ Gas is Sublimation." },
         { unit: "Chemistry", q: "Which is a CHEMICAL change?", options: ["Rusting Iron", "Melting Ice", "Breaking Glass", "Boiling Water"], ans: "Rusting Iron", reason: "Rust creates a NEW substance." },
+        { unit: "Chemistry", q: "Copper wire is ductile. This is a:", options: ["Physical Property", "Chemical Property", "Chemical Change", "Physical Change"], ans: "Physical Property", reason: "It describes the copper without changing it." },
         
         // BIOLOGY
         { unit: "Biology", q: "The 'Powerhouse' of the cell:", options: ["Mitochondria", "Nucleus", "Ribosome", "Vacuole"], ans: "Mitochondria", reason: "It creates energy for the cell." },
         { unit: "Biology", q: "First phase of Mitosis?", options: ["Prophase", "Metaphase", "Anaphase", "Telophase"], ans: "Prophase", reason: "PMAT: Prophase is #1." },
         { unit: "Biology", q: "Found in Plants but NOT Animals:", options: ["Cell Wall", "Nucleus", "Mitochondria", "Membrane"], ans: "Cell Wall", reason: "Plants need rigid walls for structure." },
+        { unit: "Biology", q: "Relationship where BOTH benefit:", options: ["Mutualism", "Parasitism", "Commensalism", "Predation"], ans: "Mutualism", reason: "+/+ relationship." },
 
         // ASTRONOMY
         { unit: "Astronomy", q: "Cause of Day & Night?", options: ["Rotation", "Revolution", "Orbit", "Gravity"], ans: "Rotation", reason: "Earth spins on its axis every 24h." },
@@ -303,6 +424,9 @@
         document.querySelectorAll('.container > div').forEach(d => d.classList.add('hidden'));
         document.getElementById(id).classList.remove('hidden');
         if(id === 'screen-menu') resetTheme();
+        if(id === 'screen-study') document.querySelector('.container').style.maxWidth = '1000px';
+        else document.querySelector('.container').style.maxWidth = '600px';
+        lucide.createIcons();
     }
 
     function resetTheme() {
@@ -330,7 +454,10 @@
         // APPLY VISUAL THEME
         const theme = THEMES[currentQ.unit];
         document.documentElement.style.setProperty('--current-glow', theme.color);
-        document.getElementById('q-icon').innerText = theme.icon;
+        // Set icon via Lucide
+        const iconContainer = document.getElementById('q-icon');
+        iconContainer.innerHTML = `<i data-lucide="${theme.icon}"></i>`;
+        
         document.getElementById('unit-badge').innerText = currentQ.unit;
         
         // Update Content
@@ -346,6 +473,8 @@
             btn.onclick = () => checkAnswer(opt, btn, theme.color);
             document.getElementById('options-container').appendChild(btn);
         });
+        
+        lucide.createIcons();
     }
 
     function checkAnswer(selected, btn, color) {
