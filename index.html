@@ -3,426 +3,337 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Circuit Review Game with AI</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Grade 9 Science Exam Master</title>
     <style>
-        body { background-color: #0f172a; color: #e2e8f0; font-family: sans-serif; overflow-x: hidden; }
-        .circuit-bg { background-image: radial-gradient(#1e293b 1px, transparent 1px); background-size: 20px 20px; }
-        .modal-overlay { background-color: rgba(0, 0, 0, 0.9); backdrop-filter: blur(5px); }
-        .ai-glow { box-shadow: 0 0 15px rgba(56, 189, 248, 0.4); }
-        .typing-dot { animation: typing 1.4s infinite; }
-        @keyframes typing { 0%, 100% { opacity: 0; } 50% { opacity: 1; } }
-        /* Custom scrollbar for chat */
-        #ai-messages::-webkit-scrollbar { width: 4px; }
-        #ai-messages::-webkit-scrollbar-track { background: transparent; }
-        #ai-messages::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
+        :root {
+            --bg-color: #1e1e2f;
+            --card-bg: #2d2d44;
+            --text-color: #e0e0e0;
+            --accent-chem: #4facfe; /* Blue */
+            --accent-bio: #43e97b; /* Green */
+            --accent-astro: #a18cd1; /* Purple */
+            --accent-elec: #fad0c4; /* Peach/Orange for Elec */
+            --btn-hover: #3e3e5e;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 700px;
+            background-color: var(--card-bg);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.4);
+            position: relative;
+            overflow: hidden;
+        }
+
+        h1, h2 { text-align: center; margin-bottom: 20px; color: white; }
+        
+        /* Navigation & Menu */
+        .menu-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 30px; }
+        .menu-btn {
+            padding: 20px;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s, filter 0.2s;
+            color: #1a1a2e;
+        }
+        .btn-study { background: linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%); }
+        .btn-game { background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); }
+        .menu-btn:hover { transform: translateY(-3px); filter: brightness(1.1); }
+        
+        .back-btn {
+            background: transparent;
+            border: 1px solid #666;
+            color: #aaa;
+            padding: 5px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            margin-bottom: 15px;
+        }
+        .back-btn:hover { background: rgba(255,255,255,0.1); color: white; }
+
+        /* Sections */
+        .hidden { display: none; }
+        
+        /* Cheat Sheet Styles */
+        .cheat-sheet-grid { display: grid; gap: 20px; }
+        .concept-card {
+            background: rgba(0,0,0,0.2);
+            padding: 15px;
+            border-radius: 10px;
+            border-left: 5px solid #ccc;
+        }
+        .border-chem { border-color: var(--accent-chem); }
+        .border-bio { border-color: var(--accent-bio); }
+        .border-astro { border-color: var(--accent-astro); }
+        .border-elec { border-color: #ff9a9e; }
+
+        .formula {
+            font-family: 'Courier New', monospace;
+            background: rgba(255,255,255,0.1);
+            padding: 10px;
+            border-radius: 5px;
+            text-align: center;
+            margin: 10px 0;
+            font-weight: bold;
+            font-size: 1.2em;
+        }
+
+        /* Game Styles */
+        .unit-badge {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 0.85rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            margin-bottom: 15px;
+            color: #1a1a2e;
+        }
+        
+        .question-text { font-size: 1.3rem; margin-bottom: 25px; line-height: 1.5; }
+        
+        .options-list { display: flex; flex-direction: column; gap: 10px; }
+        
+        .option-btn {
+            background: rgba(255,255,255,0.05);
+            border: 2px solid rgba(255,255,255,0.1);
+            color: white;
+            padding: 15px;
+            text-align: left;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: 0.2s;
+            font-size: 1rem;
+        }
+        .option-btn:hover { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.3); }
+
+        .feedback-box {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 10px;
+            display: none;
+            animation: fadeIn 0.3s;
+        }
+        .feedback-correct { background: rgba(67, 233, 123, 0.2); border: 1px solid var(--accent-bio); color: #d4ffda; }
+        .feedback-wrong { background: rgba(255, 99, 99, 0.2); border: 1px solid #ff6b6b; color: #ffd1d1; }
+        
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .next-btn {
+            width: 100%;
+            margin-top: 20px;
+            padding: 15px;
+            background: var(--accent-chem);
+            border: none;
+            border-radius: 10px;
+            color: #1a1a2e;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 1.1rem;
+        }
     </style>
 </head>
-<body class="min-h-screen p-4 md:p-8 circuit-bg flex flex-col items-center">
+<body>
 
-    <header class="w-full max-w-4xl flex justify-between items-center mb-6">
-        <h1 class="text-2xl font-bold text-sky-400">⚡ Circuit Lab <span class="text-xs font-normal text-slate-500 uppercase tracking-widest ml-2">Advanced Edition</span></h1>
-        <div class="flex gap-2">
-            <button onclick="toggleCheatSheet()" class="bg-slate-700 text-white font-bold py-1.5 px-3 rounded text-sm hover:bg-slate-600 transition-colors border border-slate-600">CHEAT SHEET</button>
-            <button onclick="toggleAIChat()" class="bg-sky-600 text-white font-bold py-1.5 px-3 rounded text-sm ai-glow hover:bg-sky-500 transition-colors">✨ AI ASSISTANT</button>
-        </div>
-    </header>
-
-    <div class="w-full max-w-4xl grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <!-- Main Game Area -->
-        <main id="game-container" class="lg:col-span-2 bg-slate-800 border border-slate-700 rounded-xl p-6 shadow-xl relative">
-            
-            <!-- Progress Bar -->
-            <div class="w-full bg-slate-900 h-1.5 rounded-full mb-6 overflow-hidden">
-                <div id="progress-bar" class="bg-sky-500 h-full transition-all duration-500" style="width: 0%"></div>
-            </div>
-
-            <!-- Level Info -->
-            <div id="screen-level">
-                <div class="mb-4 flex justify-between items-start">
-                    <div>
-                        <h2 id="level-title" class="text-xl font-bold text-white mb-1">Level 1</h2>
-                        <p id="level-instruction" class="text-slate-300 text-sm"></p>
-                    </div>
-                    <button onclick="requestAIHint()" class="text-xs bg-slate-700 text-sky-400 px-2 py-1 rounded hover:bg-slate-600 border border-sky-900">✨ AI HINT</button>
-                </div>
-
-                <!-- Circuit Drawing -->
-                <div id="visual-area" class="bg-white rounded-lg p-6 mb-6 flex flex-col items-center justify-center border-2 border-slate-600 min-h-[220px]">
-                    <!-- Circuit logic injected here -->
-                </div>
-
-                <!-- Input Area -->
-                <div class="flex flex-col gap-4">
-                    <div id="input-container" class="flex justify-center items-center gap-3">
-                        <!-- Inputs injected here -->
-                    </div>
-                    <button onclick="checkAnswer()" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3 rounded-lg transition-all shadow-lg">VERIFY CIRCUIT</button>
-                </div>
-            </div>
-
-            <!-- Victory Screen -->
-            <div id="screen-victory" class="hidden text-center py-10">
-                <div class="mb-6 text-6xl">🌟</div>
-                <h2 class="text-3xl font-bold text-emerald-400 mb-2">Master Status Achieved!</h2>
-                <p class="text-slate-300 mb-8 px-4">You've solved the most difficult problems from the Grade 9 review sheet.</p>
-                <div class="flex flex-col gap-3 max-w-xs mx-auto">
-                    <button onclick="generateAIPuzzle()" class="bg-sky-600 hover:bg-sky-500 text-white font-bold py-3 px-6 rounded-lg transition-all ai-glow">✨ GENERATE LEVEL 5+ AI PUZZLE</button>
-                    <button onclick="location.reload()" class="text-slate-500 text-sm hover:underline">Reset to Level 3 Challenges</button>
-                </div>
-            </div>
-        </main>
-
-        <!-- AI Assistant Sidebar -->
-        <aside id="ai-sidebar" class="bg-slate-900 border border-slate-700 rounded-xl flex flex-col h-[600px] shadow-2xl overflow-hidden hidden lg:flex">
-            <div class="p-3 bg-slate-800 border-b border-slate-700 font-bold text-sky-400 flex items-center gap-2">
-                <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                ✨ Lab Assistant
-            </div>
-            <div id="ai-messages" class="flex-1 overflow-y-auto p-4 space-y-4 text-sm">
-                <div class="bg-slate-800 p-3 rounded-lg border-l-2 border-sky-500 text-slate-300">
-                    I'm ready to help with complex circuit analysis. Ask me about $V = IR$, Parallel branches, or Level 4 concepts!
-                </div>
-            </div>
-            <div class="p-3 bg-slate-800 border-t border-slate-700">
-                <div class="flex gap-2">
-                    <input type="text" id="ai-input" placeholder="Ask a question..." class="bg-slate-700 text-white text-xs p-2 rounded flex-1 focus:outline-none focus:ring-1 focus:ring-sky-500">
-                    <button onclick="sendChatMessage()" class="bg-sky-600 p-2 rounded hover:bg-sky-500">
-                        <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-                    </button>
-                </div>
-            </div>
-        </aside>
-    </div>
-
-    <!-- Mobile AI Drawer -->
-    <div id="mobile-ai-drawer" class="fixed inset-0 z-[100] bg-black/80 lg:hidden hidden">
-        <div class="absolute bottom-0 left-0 right-0 h-3/4 bg-slate-900 rounded-t-2xl flex flex-col p-4">
-            <div class="flex justify-between items-center mb-4">
-                <h3 class="font-bold text-sky-400">✨ AI Assistant</h3>
-                <button onclick="toggleAIChat()" class="text-slate-400 text-2xl">&times;</button>
-            </div>
-            <div id="ai-messages-mobile" class="flex-1 overflow-y-auto space-y-4 text-sm pb-4"></div>
-            <div class="flex gap-2">
-                <input type="text" id="ai-input-mobile" placeholder="Ask a question..." class="bg-slate-800 text-white text-sm p-3 rounded-xl flex-1 focus:outline-none">
-                <button onclick="sendChatMessage(true)" class="bg-sky-600 px-4 rounded-xl">Send</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Explanation Modal -->
-    <div id="feedback-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 modal-overlay">
-        <div class="bg-slate-900 border border-slate-700 w-full max-w-sm rounded-xl overflow-hidden shadow-2xl">
-            <div id="fb-header" class="p-4 text-center font-bold text-lg text-white"></div>
-            <div class="p-6">
-                <p id="fb-text" class="text-slate-300 text-sm leading-relaxed mb-4"></p>
-                <div id="ai-explanation-box" class="hidden mb-4 p-3 bg-sky-900/20 border-l-2 border-sky-400 text-xs italic text-sky-200"></div>
-                <div class="flex flex-col gap-2">
-                    <button id="ai-explain-btn" onclick="askAISimpler()" class="w-full py-2 rounded font-bold text-sky-400 border border-sky-800 hover:bg-sky-900/30 text-xs transition-all">✨ EXPLAIN THE PHYSICS</button>
-                    <button id="fb-btn" class="w-full py-2 rounded font-bold text-white"></button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Cheat Sheet Modal -->
-    <div id="cheat-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 modal-overlay">
-        <div class="bg-slate-900 border border-slate-700 w-full max-w-md rounded-xl p-6 shadow-2xl overflow-y-auto max-h-[90vh]">
-            <div class="flex justify-between mb-4 border-b border-slate-700 pb-2">
-                <h2 class="text-xl font-bold text-amber-400">Advanced Study Sheet</h2>
-                <button onclick="toggleCheatSheet()" class="text-slate-400 text-2xl">&times;</button>
-            </div>
-            <div class="space-y-6 text-sm">
-                <div>
-                    <p class="font-bold text-sky-400 mb-1">Ohm's Law Triangle</p>
-                    <p class="text-slate-300">Voltage ($V$) = $I \times R$</p>
-                    <p class="text-slate-300">Current ($I$) = $V / R$</p>
-                    <p class="text-slate-300">Resistance ($R$) = $V / I$</p>
-                </div>
-                <div class="bg-slate-800 p-3 rounded border border-slate-700">
-                    <p class="font-bold text-yellow-500 mb-1">SERIES RULES (One Loop)</p>
-                    <p>• $I_T = I_1 = I_2$ (Same everywhere)</p>
-                    <p>• $V_T = V_1 + V_2$ (Voltage adds up)</p>
-                    <p>• $R_T = R_1 + R_2$ (Resistance adds up)</p>
-                </div>
-                <div class="bg-slate-800 p-3 rounded border border-slate-700">
-                    <p class="font-bold text-purple-500 mb-1">PARALLEL RULES (Branches)</p>
-                    <p>• $V_T = V_1 = V_2$ (Same on every branch)</p>
-                    <p>• $I_T = I_1 + I_2$ (Current adds up)</p>
-                    <p>• Adding branches <strong>decreases</strong> total resistance.</p>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        const apiKey = "";
+<div class="container">
+    <!-- MAIN MENU -->
+    <div id="screen-menu">
+        <h1>🧬 Grade 9 Science Master</h1>
+        <p style="text-align: center; opacity: 0.8;">Select a mode to prepare for your exam.</p>
         
-        // Challenging levels based on Level 3 and 4 of PDF
-        const levels = [
-            { 
-                id: 1, 
-                title: "Level 3 Challenge: 3-Branch Current", 
-                instr: "$I_T = 36A$. Branch 1 uses $12A$ and Branch 3 uses $6A$. Find Current in Branch 2 ($I_2$).", 
-                solution: {i2: 18}, 
-                explain: "In parallel circuits, $I_T = I_1 + I_2 + I_3$. So $36A - 12A - 6A = 18A$.", 
-                wrong: "Remember the Parallel Current Rule: All branch currents must add up to the total current ($36A$).", 
-                type: 'parallel-3', 
-                val: {it: 36, i1: 12, i3: 6, i2: '?'}
-            },
-            { 
-                id: 2, 
-                title: "Level 4 Challenge: High Voltage Ohm's Law", 
-                instr: "Battery = $220V$. A motor in this parallel circuit has a resistance of $11\Omega$. Find the current $I$ for this motor.", 
-                solution: {i: 20}, 
-                explain: "Using $I = V / R$. In parallel, the motor gets the full $220V$. $220 / 11 = 20A$.", 
-                wrong: "In parallel, every branch gets the full battery voltage ($220V$). Now use $I = V / R$.", 
-                type: 'basic', 
-                val: {v: 220, r: 11, i: '?'}
-            },
-            { 
-                id: 3, 
-                title: "Level 4 Challenge: Multi-Load Series", 
-                instr: "A series circuit has a $2V$ bulb and a $10V$ motor. If the battery is $20V$, find the missing voltage for bulb 4 ($V_4$).", 
-                solution: {v4: 8}, 
-                explain: "In series, $V_T = V_1 + V_2 + V_3$. $20V$ (Total) - $2V$ - $10V$ = $8V$.", 
-                wrong: "In series, all component voltages must add up to the battery total ($20V$).", 
-                type: 'series-3', 
-                val: {vt: 20, v1: 2, v2: 10, v4: '?'}
-            },
-            { 
-                id: 4, 
-                title: "Level 4+ Challenge: Specific Resistance", 
-                instr: "Total Voltage = $50V$. Current in Branch 1 is $10A$. Find the Resistance of Resistor 1 ($R_1$).", 
-                solution: {r1: 5}, 
-                explain: "In parallel, Branch 1 gets $50V$. Using $R = V / I$, we get $50 / 10 = 5\Omega$.", 
-                wrong: "Find the resistance using $R = V / I$. The voltage for Branch 1 is the same as the battery ($50V$).", 
-                type: 'parallel', 
-                val: {vt: 50, i1: 10, r1: '?'}
-            }
-        ];
+        <div class="menu-grid">
+            <button class="menu-btn btn-study" onclick="showScreen('screen-study')">📚 Review Cheat Sheets</button>
+            <button class="menu-btn btn-game" onclick="startGame()">🎮 Start The Gauntlet</button>
+        </div>
+        <p style="text-align:center; margin-top:30px; font-size: 0.9em; opacity: 0.6;">Covers: Chemistry, Biology, Astronomy, Electricity</p>
+    </div>
 
-        let cur = 0;
-        let isGenerating = false;
-
-        async function callGemini(prompt, systemPrompt = "You are a helpful science tutor for Grade 9 students.") {
-            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
-            const payload = {
-                contents: [{ parts: [{ text: prompt }] }],
-                systemInstruction: { parts: [{ text: systemPrompt }] }
-            };
-
-            let delay = 1000;
-            for (let i = 0; i < 5; i++) {
-                try {
-                    const response = await fetch(url, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(payload)
-                    });
-                    if (!response.ok) throw new Error();
-                    const result = await response.json();
-                    return result.candidates?.[0]?.content?.parts?.[0]?.text;
-                } catch (e) {
-                    if (i === 4) return "Connection timeout. Ensure you are online or try again.";
-                    await new Promise(r => setTimeout(r, delay));
-                    delay *= 2;
-                }
-            }
-        }
-
-        function toggleCheatSheet() { document.getElementById('cheat-modal').classList.toggle('hidden'); }
-        function toggleAIChat() { 
-            const drawer = document.getElementById('mobile-ai-drawer');
-            drawer.classList.toggle('hidden');
-        }
-
-        function loadLevel() {
-            const l = levels[cur];
-            document.getElementById('level-title').innerText = l.title;
-            document.getElementById('level-instruction').innerText = l.instr;
-            document.getElementById('progress-bar').style.width = `${((cur + 1) / (levels.length)) * 100}%`;
-            document.getElementById('input-container').innerHTML = `<input type="number" id="ans" class="bg-slate-700 text-white p-3 rounded-lg text-center w-28 border border-slate-600 outline-none focus:ring-2 focus:ring-sky-500" placeholder="Value">`;
-            draw(l);
-        }
-
-        function draw(l) {
-            const area = document.getElementById('visual-area');
-            let content = `<div class="w-full flex flex-col items-center gap-6">`;
+    <!-- STUDY CHEAT SHEETS -->
+    <div id="screen-study" class="hidden">
+        <button class="back-btn" onclick="showScreen('screen-menu')">← Back to Menu</button>
+        <h2>Formula & Fact Sheet</h2>
+        
+        <div class="cheat-sheet-grid">
+            <!-- Chemistry -->
+            <div class="concept-card border-chem">
+                <h3 style="color:var(--accent-chem); margin-top:0;">🧪 Chemistry: Density</h3>
+                <p>Remember the Density Triangle!</p>
+                <div class="formula">D = m ÷ V</div>
+                <div class="formula">m = D × V</div>
+                <div class="formula">V = m ÷ D</div>
+                <p><strong>Clue:</strong> If density > 1.0 g/cm³, it SINKS in water.</p>
+            </div>
             
-            if (l.type === 'basic') {
-                content += `
-                    <div class="flex items-center gap-4 text-slate-900 font-mono text-xs">
-                        <div class="p-3 border-2 border-slate-500 bg-slate-100 rounded">🔋 BATTERY (${l.val.v}V)</div>
-                        <div class="h-0.5 w-12 bg-slate-500"></div>
-                        <div class="p-3 border-2 border-slate-500 bg-slate-100 rounded">⚙️ MOTOR (${l.val.r || l.val.i} ${l.val.r ? 'Ω' : 'A'})</div>
-                    </div>
-                `;
-            } else if (l.type === 'series-3') {
-                content += `
-                    <div class="flex flex-wrap justify-center items-center gap-2 text-slate-900 font-mono text-[10px]">
-                        <div class="p-2 border-2 border-slate-500 bg-slate-100 rounded">🔋 ${l.val.vt}V</div>
-                        <div class="h-0.5 w-4 bg-slate-500"></div>
-                        <div class="p-2 border-2 border-slate-500 bg-slate-100 rounded">💡 B1:${l.val.v1}V</div>
-                        <div class="h-0.5 w-4 bg-slate-500"></div>
-                        <div class="p-2 border-2 border-slate-500 bg-slate-100 rounded">⚙️ M:${l.val.v2}V</div>
-                        <div class="h-0.5 w-4 bg-slate-500"></div>
-                        <div class="p-2 border-2 border-slate-500 bg-slate-100 rounded">💡 B4:?</div>
-                    </div>
-                `;
-            } else if (l.type.startsWith('parallel')) {
-                const is3 = l.type.includes('3');
-                content += `
-                    <div class="relative flex flex-col items-center gap-3 text-slate-900 font-mono text-[10px]">
-                        <div class="p-2 border-2 border-slate-500 bg-slate-100 rounded z-10 font-bold">🔋 SOURCE (${l.val.vt || l.val.it + 'A'})</div>
-                        <div class="flex gap-4">
-                            <div class="flex flex-col items-center">
-                                <div class="w-0.5 h-4 bg-slate-500"></div>
-                                <div class="p-2 border-2 border-slate-500 bg-slate-100 rounded">💡 I1:${l.val.i1}A</div>
-                            </div>
-                            <div class="flex flex-col items-center">
-                                <div class="w-0.5 h-4 bg-slate-500"></div>
-                                <div class="p-2 border-2 border-slate-500 bg-slate-100 rounded">💡 I2:?</div>
-                            </div>
-                            ${is3 ? `
-                            <div class="flex flex-col items-center">
-                                <div class="w-0.5 h-4 bg-slate-500"></div>
-                                <div class="p-2 border-2 border-slate-500 bg-slate-100 rounded">💡 I3:${l.val.i3}A</div>
-                            </div>` : ''}
-                        </div>
-                    </div>
-                `;
-            }
-            area.innerHTML = content + `</div>`;
+            <!-- Electricity -->
+            <div class="concept-card border-elec">
+                <h3 style="color:#ff9a9e; margin-top:0;">⚡ Electricity: Ohm's Law</h3>
+                <p>The relationship between Voltage (V), Current (I), and Resistance (R).</p>
+                <div class="formula">V = I × R</div>
+                <div class="formula">I = V ÷ R</div>
+                <div class="formula">R = V ÷ I</div>
+                <ul style="padding-left: 20px; margin-bottom: 0;">
+                    <li><strong>Series:</strong> One path. One breaks, all go out.</li>
+                    <li><strong>Parallel:</strong> Multiple paths. One breaks, others stay on.</li>
+                </ul>
+            </div>
+
+            <!-- Biology -->
+            <div class="concept-card border-bio">
+                <h3 style="color:var(--accent-bio); margin-top:0;">🦠 Biology: Cells</h3>
+                <ul style="padding-left: 20px;">
+                    <li><strong>Mitochondria:</strong> Powerhouse (Energy).</li>
+                    <li><strong>Nucleus:</strong> Brain (DNA/Control).</li>
+                    <li><strong>Plant Cells Only:</strong> Cell Wall & Chloroplasts.</li>
+                    <li><strong>Mitosis Order:</strong> PMAT (Prophase, Metaphase, Anaphase, Telophase).</li>
+                </ul>
+            </div>
+
+            <!-- Astronomy -->
+            <div class="concept-card border-astro">
+                <h3 style="color:var(--accent-astro); margin-top:0;">🪐 Astronomy: Basics</h3>
+                <ul style="padding-left: 20px;">
+                    <li><strong>Rotation:</strong> Earth spinning (24 hours = Day/Night).</li>
+                    <li><strong>Revolution:</strong> Earth orbiting Sun (365 days = Year).</li>
+                    <li><strong>Order:</strong> Mercury, Venus, Earth, Mars, Jupiter, Saturn, Uranus, Neptune.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- GAME AREA -->
+    <div id="screen-game" class="hidden">
+        <button class="back-btn" onclick="showScreen('screen-menu')">← Quit Game</button>
+        
+        <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+            <span id="score-display">Score: 0</span>
+            <span id="question-count">Q: 1</span>
+        </div>
+
+        <div id="game-content">
+            <span id="unit-badge" class="unit-badge" style="background: white;">Loading...</span>
+            <div id="question-text" class="question-text">Question text...</div>
+            <div id="options-container" class="options-list"></div>
+            <div id="feedback" class="feedback-box"></div>
+            <button id="next-btn" class="next-btn hidden" onclick="nextQuestion()">Next Question</button>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    // --- DATA: QUESTION BANK ---
+    const questions = [
+        // CHEMISTRY
+        { unit: "Chemistry", color: "#4facfe", q: "A block has Mass = 50g and Volume = 10cm³. What is its Density?", options: ["500 g/cm³", "5 g/cm³", "0.2 g/cm³", "40 g/cm³"], ans: "5 g/cm³", reason: "Density = Mass ÷ Volume (50 ÷ 10 = 5)." },
+        { unit: "Chemistry", color: "#4facfe", q: "Dry Ice turning directly into gas (smoke) is an example of:", options: ["Melting", "Evaporation", "Sublimation", "Deposition"], ans: "Sublimation", reason: "Sublimation is the jump from Solid straight to Gas." },
+        { unit: "Chemistry", color: "#4facfe", q: "Which of these is a CHEMICAL change?", options: ["Iron Rusting", "Ice Melting", "Sugar Dissolving", "Glass Breaking"], ans: "Iron Rusting", reason: "Rust creates a new substance (Iron Oxide). The others are physical changes." },
+        { unit: "Chemistry", color: "#4facfe", q: "Chocolate Chip Cookie Dough is classified as a:", options: ["Homogeneous Mixture", "Heterogeneous Mixture", "Element", "Pure Substance"], ans: "Heterogeneous Mixture", reason: "You can see the different parts (chips vs. dough), so it's Heterogeneous." },
+        
+        // BIOLOGY
+        { unit: "Biology", color: "#43e97b", q: "Which organelle is the 'Powerhouse' of the cell?", options: ["Nucleus", "Mitochondria", "Ribosome", "Vacuole"], ans: "Mitochondria", reason: "Mitochondria perform cellular respiration to create energy." },
+        { unit: "Biology", color: "#43e97b", q: "Which phase of Mitosis comes first?", options: ["Metaphase", "Telophase", "Prophase", "Anaphase"], ans: "Prophase", reason: "Remember PMAT: Prophase is the first stage." },
+        { unit: "Biology", color: "#43e97b", q: "Plant cells have this, but Animal cells do not:", options: ["Nucleus", "Cell Membrane", "Cell Wall", "Cytoplasm"], ans: "Cell Wall", reason: "Plants need a rigid Cell Wall for structure. Animals only have a membrane." },
+
+        // ASTRONOMY
+        { unit: "Astronomy", color: "#a18cd1", q: "What causes Day and Night on Earth?", options: ["Earth orbiting the Sun", "The Moon blocking the Sun", "Earth rotating on its axis", "The Sun turning off"], ans: "Earth rotating on its axis", reason: "Rotation takes 24 hours and causes day/night cycles." },
+        { unit: "Astronomy", color: "#a18cd1", q: "Which planet is the largest in our solar system?", options: ["Earth", "Saturn", "Jupiter", "Mars"], ans: "Jupiter", reason: "Jupiter is the gas giant king of the solar system." },
+        
+        // ELECTRICITY
+        { unit: "Electricity", color: "#ff9a9e", q: "Calculate Voltage if Current(I) = 3A and Resistance(R) = 4Ω.", options: ["12 V", "0.75 V", "7 V", "1.3 V"], ans: "12 V", reason: "Ohm's Law: V = I × R (3 × 4 = 12)." },
+        { unit: "Electricity", color: "#ff9a9e", q: "In which circuit does one broken bulb turn OFF all the others?", options: ["Parallel", "Series", "Short Circuit", "Open Circuit"], ans: "Series", reason: "In Series, there is only one path. If it breaks, flow stops." },
+        { unit: "Electricity", color: "#ff9a9e", q: "A material that prevents electron flow (like rubber) is an:", options: ["Conductor", "Insulator", "Resistor", "Battery"], ans: "Insulator", reason: "Insulators hold onto their electrons tightly." }
+    ];
+
+    // --- GAME LOGIC ---
+    let currentQIndex = 0;
+    let score = 0;
+    let currentQuestion = null;
+
+    function showScreen(screenId) {
+        document.querySelectorAll('.container > div').forEach(div => div.classList.add('hidden'));
+        document.getElementById(screenId).classList.remove('hidden');
+    }
+
+    function startGame() {
+        score = 0;
+        currentQIndex = 0;
+        document.getElementById('score-display').innerText = "Score: 0";
+        showScreen('screen-game');
+        nextQuestion();
+    }
+
+    function nextQuestion() {
+        // Reset UI
+        document.getElementById('feedback').style.display = 'none';
+        document.getElementById('next-btn').classList.add('hidden');
+        document.getElementById('options-container').innerHTML = '';
+        
+        // Pick random question
+        currentQuestion = questions[Math.floor(Math.random() * questions.length)];
+        
+        // Update UI
+        currentQIndex++;
+        document.getElementById('question-count').innerText = "Q: " + currentQIndex;
+        
+        const badge = document.getElementById('unit-badge');
+        badge.innerText = currentQuestion.unit;
+        badge.style.background = currentQuestion.color;
+        
+        document.getElementById('question-text').innerText = currentQuestion.q;
+
+        // Shuffle options
+        const shuffledOptions = [...currentQuestion.options].sort(() => Math.random() - 0.5);
+
+        shuffledOptions.forEach(opt => {
+            const btn = document.createElement('button');
+            btn.className = 'option-btn';
+            btn.innerText = opt;
+            btn.onclick = () => checkAnswer(opt, btn);
+            document.getElementById('options-container').appendChild(btn);
+        });
+    }
+
+    function checkAnswer(selected, btnElement) {
+        // Disable all buttons
+        const allBtns = document.querySelectorAll('.option-btn');
+        allBtns.forEach(b => b.disabled = true);
+
+        const feedback = document.getElementById('feedback');
+        feedback.style.display = 'block';
+
+        if (selected === currentQuestion.ans) {
+            score += 10;
+            document.getElementById('score-display').innerText = "Score: " + score;
+            feedback.className = "feedback-box feedback-correct";
+            feedback.innerHTML = `<strong>Correct!</strong> ${currentQuestion.reason}`;
+            btnElement.style.background = "rgba(67, 233, 123, 0.4)";
+            btnElement.style.borderColor = "#43e97b";
+        } else {
+            feedback.className = "feedback-box feedback-wrong";
+            feedback.innerHTML = `<strong>Incorrect.</strong> The correct answer was <u>${currentQuestion.ans}</u>.<br><br>${currentQuestion.reason}`;
+            btnElement.style.background = "rgba(255, 99, 99, 0.4)";
+            btnElement.style.borderColor = "#ff6b6b";
         }
 
-        function checkAnswer() {
-            const l = levels[cur];
-            const val = parseFloat(document.getElementById('ans').value);
-            const isCorrect = val === Object.values(l.solution)[0];
-            showFeedback(isCorrect);
-        }
+        document.getElementById('next-btn').classList.remove('hidden');
+    }
+</script>
 
-        function showFeedback(correct) {
-            const modal = document.getElementById('feedback-modal');
-            const l = levels[cur];
-            document.getElementById('ai-explanation-box').classList.add('hidden');
-            document.getElementById('ai-explain-btn').classList.toggle('hidden', correct);
-            modal.classList.remove('hidden');
-            
-            const header = document.getElementById('fb-header');
-            header.innerText = correct ? "PUZZLE SOLVED!" : "CALCULATION ERROR";
-            header.className = `p-4 text-center font-bold text-lg text-white ${correct ? "bg-emerald-600" : "bg-rose-600"}`;
-            
-            document.getElementById('fb-text').innerText = correct ? l.explain : l.wrong;
-            
-            const btn = document.getElementById('fb-btn');
-            btn.className = `w-full py-2 rounded font-bold text-white mt-2 ${correct ? "bg-emerald-600 hover:bg-emerald-500" : "bg-slate-700 hover:bg-slate-600"}`;
-            btn.innerText = correct ? "NEXT TASK" : "RETRY";
-            
-            btn.onclick = () => {
-                modal.classList.add('hidden');
-                if (correct) {
-                    cur++;
-                    if (cur < levels.length) loadLevel();
-                    else {
-                        document.getElementById('screen-level').classList.add('hidden');
-                        document.getElementById('screen-victory').classList.remove('hidden');
-                        document.getElementById('progress-bar').style.width = '100%';
-                    }
-                }
-            };
-        }
-
-        async function askAISimpler() {
-            const level = levels[cur];
-            const btn = document.getElementById('ai-explain-btn');
-            const box = document.getElementById('ai-explanation-box');
-            
-            btn.innerText = "✨ ANALYZING...";
-            btn.disabled = true;
-
-            const prompt = `The user is stuck on this advanced electricity puzzle: "${level.instr}". 
-                           The answer is ${Object.values(level.solution)[0]}. 
-                           Explain the physics rule (Series vs Parallel voltage/current) clearly for a smart 9th grade student. Do not ask them questions. Just provide a clear, one-paragraph explanation with the solution steps.`;
-            
-            const response = await callGemini(prompt);
-            box.innerText = response;
-            box.classList.remove('hidden');
-            btn.innerText = "✨ PHYSICS EXPLANATION GENERATED";
-        }
-
-        async function requestAIHint() {
-            const l = levels[cur];
-            addMessage("AI", "Thinking of a logical nudge...", "sky");
-            const prompt = `The student is on Level: ${l.title}. Task: ${l.instr}. 
-                           Provide a single sentence hint pointing to the specific rule (e.g., 'In parallel, voltage stays the same'). Do not give the answer.`;
-            const hint = await callGemini(prompt);
-            addMessage("AI", hint, "sky");
-        }
-
-        async function generateAIPuzzle() {
-            if (isGenerating) return;
-            isGenerating = true;
-            const btn = event.target;
-            const oldText = btn.innerText;
-            btn.innerText = "✨ GENERATING LEVEL 5+...";
-            
-            const prompt = `Generate a JSON object for a CHALLENGING electricity puzzle (Grade 9 Level 4+). 
-                           Use high values like $220V$ or complex 3-branch parallel setups. 
-                           Format: { "title": "AI Advanced Master", "instr": "Description", "solution": {"x": number}, "explain": "Logic", "wrong": "Hint", "type": "parallel-3", "val": {it:30, i1:10, i3:10} }
-                           Only return the raw JSON.`;
-            
-            try {
-                const response = await callGemini(prompt, "You are an advanced physics puzzle generator. Return valid JSON only.");
-                const jsonStr = response.replace(/```json|```/g, '').trim();
-                const newPuzzle = JSON.parse(jsonStr);
-                
-                levels.push(newPuzzle);
-                cur = levels.length - 1;
-                
-                document.getElementById('screen-victory').classList.add('hidden');
-                document.getElementById('screen-level').classList.remove('hidden');
-                loadLevel();
-                addMessage("AI", "New master-level challenge loaded. Solve this if you can!", "emerald");
-            } catch (e) {
-                addMessage("AI", "Calculation failed. Let's try once more.", "rose");
-            } finally {
-                btn.innerText = oldText;
-                isGenerating = false;
-            }
-        }
-
-        async function sendChatMessage(isMobile = false) {
-            const inputId = isMobile ? 'ai-input-mobile' : 'ai-input';
-            const input = document.getElementById(inputId);
-            const text = input.value.trim();
-            if (!text) return;
-
-            addMessage("You", text, "slate", isMobile);
-            input.value = "";
-
-            const response = await callGemini(text, "You are a senior science lab assistant. Provide direct, factual answers about electricity. Avoid asking follow-up questions.");
-            addMessage("AI", response, "sky", isMobile);
-        }
-
-        function addMessage(sender, text, color, isMobile = false) {
-            const containerId = isMobile ? 'ai-messages-mobile' : 'ai-messages';
-            const container = document.getElementById(containerId);
-            const div = document.createElement('div');
-            div.className = `p-3 rounded-lg border-l-2 border-${color}-500 ${sender === 'AI' ? 'bg-slate-800' : 'bg-slate-700'} text-xs mb-3`;
-            div.innerHTML = `<strong class="text-${color}-400">${sender}:</strong> ${text}`;
-            container.appendChild(div);
-            container.scrollTop = container.scrollHeight;
-            
-            if (!isMobile) {
-                const mobileContainer = document.getElementById('ai-messages-mobile');
-                const mDiv = div.cloneNode(true);
-                mobileContainer.appendChild(mDiv);
-            }
-        }
-
-        window.onload = loadLevel;
-    </script>
 </body>
 </html>
