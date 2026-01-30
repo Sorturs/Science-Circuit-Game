@@ -6,332 +6,385 @@
     <title>Grade 9 Science Exam Master</title>
     <style>
         :root {
-            --bg-color: #1e1e2f;
-            --card-bg: #2d2d44;
-            --text-color: #e0e0e0;
-            --accent-chem: #4facfe; /* Blue */
-            --accent-bio: #43e97b; /* Green */
-            --accent-astro: #a18cd1; /* Purple */
-            --accent-elec: #fad0c4; /* Peach/Orange for Elec */
-            --btn-hover: #3e3e5e;
+            --bg-color: #121212;
+            --card-bg: #1e1e24;
+            --text-color: #ffffff;
+            
+            /* Neon Palette */
+            --chem-color: #00f2ff;
+            --bio-color: #00ff88;
+            --astro-color: #bd00ff;
+            --elec-color: #ffaa00;
+            
+            --current-glow: var(--chem-color); /* Dynamic variable */
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
             background-color: var(--bg-color);
+            background-image: radial-gradient(circle at 50% 50%, #2a2a2a 0%, #121212 100%);
             color: var(--text-color);
             margin: 0;
             padding: 20px;
             display: flex;
             justify-content: center;
+            align-items: center;
             min-height: 100vh;
+            transition: background 0.5s ease;
         }
 
         .container {
             width: 100%;
-            max-width: 700px;
+            max-width: 600px;
             background-color: var(--card-bg);
-            border-radius: 20px;
+            border-radius: 25px;
             padding: 30px;
-            box-shadow: 0 15px 40px rgba(0,0,0,0.4);
             position: relative;
             overflow: hidden;
+            /* The Glowing Border */
+            box-shadow: 0 0 20px rgba(0,0,0,0.5), 0 0 0 2px var(--current-glow);
+            transition: box-shadow 0.4s ease;
         }
 
-        h1, h2 { text-align: center; margin-bottom: 20px; color: white; }
+        h1, h2 { text-align: center; margin: 0 0 20px 0; font-weight: 800; letter-spacing: 1px; }
+        h1 { background: linear-gradient(90deg, #fff, #aaa); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+
+        /* --- MENU SCREEN --- */
+        .menu-grid { display: grid; grid-template-columns: 1fr; gap: 20px; margin-top: 30px; }
         
-        /* Navigation & Menu */
-        .menu-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 30px; }
         .menu-btn {
-            padding: 20px;
+            padding: 25px;
             border: none;
-            border-radius: 12px;
-            font-size: 1.1rem;
+            border-radius: 15px;
+            font-size: 1.3rem;
             font-weight: bold;
             cursor: pointer;
-            transition: transform 0.2s, filter 0.2s;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             color: #1a1a2e;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            text-transform: uppercase;
         }
+        
         .btn-study { background: linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%); }
-        .btn-game { background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); }
-        .menu-btn:hover { transform: translateY(-3px); filter: brightness(1.1); }
+        .btn-game { background: linear-gradient(135deg, #00ff88 0%, #00f2ff 100%); }
         
-        .back-btn {
-            background: transparent;
-            border: 1px solid #666;
-            color: #aaa;
-            padding: 5px 15px;
-            border-radius: 20px;
-            cursor: pointer;
-            margin-bottom: 15px;
-        }
-        .back-btn:hover { background: rgba(255,255,255,0.1); color: white; }
+        .menu-btn:hover { transform: scale(1.03) translateY(-3px); box-shadow: 0 10px 25px rgba(0,0,0,0.5); filter: brightness(1.1); }
 
-        /* Sections */
-        .hidden { display: none; }
+        /* --- GAME SCREEN --- */
+        .hidden { display: none !important; }
+
+        /* Top HUD */
+        .hud { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; font-weight: bold; color: #aaa; font-size: 0.9rem; }
+        .score-pill { background: #333; padding: 5px 15px; border-radius: 20px; color: white; border: 1px solid #555; }
         
-        /* Cheat Sheet Styles */
-        .cheat-sheet-grid { display: grid; gap: 20px; }
-        .concept-card {
-            background: rgba(0,0,0,0.2);
-            padding: 15px;
-            border-radius: 10px;
-            border-left: 5px solid #ccc;
-        }
-        .border-chem { border-color: var(--accent-chem); }
-        .border-bio { border-color: var(--accent-bio); }
-        .border-astro { border-color: var(--accent-astro); }
-        .border-elec { border-color: #ff9a9e; }
+        /* Visual Progress Bar */
+        .progress-container { width: 100%; height: 6px; background: #333; border-radius: 10px; margin-bottom: 25px; overflow: hidden; }
+        .progress-fill { height: 100%; width: 0%; background: var(--current-glow); transition: width 0.5s ease, background 0.4s ease; box-shadow: 0 0 10px var(--current-glow); }
 
-        .formula {
-            font-family: 'Courier New', monospace;
-            background: rgba(255,255,255,0.1);
-            padding: 10px;
-            border-radius: 5px;
-            text-align: center;
-            margin: 10px 0;
-            font-weight: bold;
-            font-size: 1.2em;
-        }
-
-        /* Game Styles */
+        /* Question Area */
+        .question-card { text-align: center; margin-bottom: 25px; animation: slideDown 0.4s ease-out; }
+        .visual-icon { font-size: 4rem; display: block; margin-bottom: 10px; filter: drop-shadow(0 0 10px rgba(255,255,255,0.3)); transition: transform 0.3s; }
+        .visual-icon:hover { transform: scale(1.1) rotate(5deg); }
+        
         .unit-badge {
             display: inline-block;
             padding: 5px 12px;
             border-radius: 15px;
-            font-size: 0.85rem;
-            font-weight: bold;
+            font-size: 0.75rem;
+            font-weight: 900;
             text-transform: uppercase;
-            margin-bottom: 15px;
-            color: #1a1a2e;
+            margin-bottom: 10px;
+            background: rgba(255,255,255,0.1);
+            color: var(--current-glow);
+            border: 1px solid var(--current-glow);
+            letter-spacing: 1px;
         }
-        
-        .question-text { font-size: 1.3rem; margin-bottom: 25px; line-height: 1.5; }
-        
-        .options-list { display: flex; flex-direction: column; gap: 10px; }
-        
-        .option-btn {
-            background: rgba(255,255,255,0.05);
-            border: 2px solid rgba(255,255,255,0.1);
-            color: white;
-            padding: 15px;
-            text-align: left;
-            border-radius: 10px;
-            cursor: pointer;
-            transition: 0.2s;
-            font-size: 1rem;
-        }
-        .option-btn:hover { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.3); }
 
+        .question-text { font-size: 1.4rem; line-height: 1.4; font-weight: 600; }
+
+        /* Options */
+        .options-list { display: grid; gap: 12px; }
+        .option-btn {
+            background: rgba(255,255,255,0.03);
+            border: 2px solid rgba(255,255,255,0.1);
+            color: #ddd;
+            padding: 18px;
+            text-align: left;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 1rem;
+            position: relative;
+            overflow: hidden;
+        }
+        .option-btn:hover { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.4); transform: translateX(5px); }
+        .option-btn:active { transform: scale(0.98); }
+
+        /* Feedback */
         .feedback-box {
             margin-top: 20px;
-            padding: 15px;
-            border-radius: 10px;
-            display: none;
-            animation: fadeIn 0.3s;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: left;
+            animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            background: rgba(0,0,0,0.3);
+            border-left: 5px solid;
         }
-        .feedback-correct { background: rgba(67, 233, 123, 0.2); border: 1px solid var(--accent-bio); color: #d4ffda; }
-        .feedback-wrong { background: rgba(255, 99, 99, 0.2); border: 1px solid #ff6b6b; color: #ffd1d1; }
-        
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .feedback-correct { border-color: var(--bio-color); color: #d4ffda; }
+        .feedback-wrong { border-color: #ff4444; color: #ffd1d1; }
 
         .next-btn {
-            width: 100%;
-            margin-top: 20px;
-            padding: 15px;
-            background: var(--accent-chem);
-            border: none;
-            border-radius: 10px;
-            color: #1a1a2e;
-            font-weight: bold;
-            cursor: pointer;
-            font-size: 1.1rem;
+            width: 100%; margin-top: 20px; padding: 18px;
+            background: white; color: #121212;
+            border: none; border-radius: 12px;
+            font-weight: 800; cursor: pointer; font-size: 1.2rem;
+            text-transform: uppercase;
+            box-shadow: 0 5px 15px rgba(255,255,255,0.2);
+            transition: 0.2s;
         }
+        .next-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(255,255,255,0.3); }
+
+        /* Cheat Sheet Styling */
+        .cheat-grid { display: grid; gap: 20px; }
+        .fact-card {
+            background: rgba(255,255,255,0.05);
+            padding: 20px;
+            border-radius: 15px;
+            border-top: 4px solid #666;
+            transition: transform 0.2s;
+        }
+        .fact-card:hover { transform: translateY(-3px); background: rgba(255,255,255,0.08); }
+        
+        .fact-header { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; color: white; }
+        .fact-icon { font-size: 1.5rem; }
+        
+        .formula-box {
+            background: rgba(0,0,0,0.3);
+            padding: 10px;
+            border-radius: 8px;
+            font-family: monospace;
+            text-align: center;
+            margin: 5px 0;
+            border: 1px dashed rgba(255,255,255,0.2);
+        }
+
+        .back-btn {
+            background: none; border: none; color: #888; cursor: pointer;
+            font-size: 1rem; margin-bottom: 15px; display: flex; align-items: center; gap: 5px;
+        }
+        .back-btn:hover { color: white; }
+
+        /* Animations */
+        @keyframes slideDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes popIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
+        @keyframes shake { 0% { transform: translateX(0); } 25% { transform: translateX(-5px); } 50% { transform: translateX(5px); } 75% { transform: translateX(-5px); } 100% { transform: translateX(0); } }
+        .shake-anim { animation: shake 0.4s ease-in-out; }
+
     </style>
 </head>
 <body>
 
-<div class="container">
-    <!-- MAIN MENU -->
+<div class="container" id="main-container">
+    <!-- MENU SCREEN -->
     <div id="screen-menu">
-        <h1>🧬 Grade 9 Science Master</h1>
-        <p style="text-align: center; opacity: 0.8;">Select a mode to prepare for your exam.</p>
+        <h1>SCIENCE<br><span style="font-size:1.5em; color:var(--bio-color);">MASTER</span></h1>
+        <p style="text-align: center; opacity: 0.7;">Visual Learning Module v2.0</p>
         
         <div class="menu-grid">
-            <button class="menu-btn btn-study" onclick="showScreen('screen-study')">📚 Review Cheat Sheets</button>
-            <button class="menu-btn btn-game" onclick="startGame()">🎮 Start The Gauntlet</button>
+            <button class="menu-btn btn-study" onclick="showScreen('screen-study')">
+                <span>📖</span> Study Notes
+            </button>
+            <button class="menu-btn btn-game" onclick="startGame()">
+                <span>🚀</span> Start Game
+            </button>
         </div>
-        <p style="text-align:center; margin-top:30px; font-size: 0.9em; opacity: 0.6;">Covers: Chemistry, Biology, Astronomy, Electricity</p>
     </div>
 
-    <!-- STUDY CHEAT SHEETS -->
+    <!-- STUDY SCREEN -->
     <div id="screen-study" class="hidden">
-        <button class="back-btn" onclick="showScreen('screen-menu')">← Back to Menu</button>
-        <h2>Formula & Fact Sheet</h2>
-        
-        <div class="cheat-sheet-grid">
-            <!-- Chemistry -->
-            <div class="concept-card border-chem">
-                <h3 style="color:var(--accent-chem); margin-top:0;">🧪 Chemistry: Density</h3>
-                <p>Remember the Density Triangle!</p>
-                <div class="formula">D = m ÷ V</div>
-                <div class="formula">m = D × V</div>
-                <div class="formula">V = m ÷ D</div>
-                <p><strong>Clue:</strong> If density > 1.0 g/cm³, it SINKS in water.</p>
+        <button class="back-btn" onclick="showScreen('screen-menu')">← Main Menu</button>
+        <h2>Cheat Codes</h2>
+        <div class="cheat-grid">
+            <div class="fact-card" style="border-color: var(--chem-color);">
+                <div class="fact-header"><span class="fact-icon">🧪</span> <h3>Chemistry</h3></div>
+                <div class="formula-box">D = m ÷ V</div>
+                <p><strong>Sink or Float?</strong> If Density > 1.0, it sinks!</p>
+                <p><strong>Change:</strong> Rust = Chemical. Melting = Physical.</p>
             </div>
             
-            <!-- Electricity -->
-            <div class="concept-card border-elec">
-                <h3 style="color:#ff9a9e; margin-top:0;">⚡ Electricity: Ohm's Law</h3>
-                <p>The relationship between Voltage (V), Current (I), and Resistance (R).</p>
-                <div class="formula">V = I × R</div>
-                <div class="formula">I = V ÷ R</div>
-                <div class="formula">R = V ÷ I</div>
-                <ul style="padding-left: 20px; margin-bottom: 0;">
-                    <li><strong>Series:</strong> One path. One breaks, all go out.</li>
-                    <li><strong>Parallel:</strong> Multiple paths. One breaks, others stay on.</li>
-                </ul>
+            <div class="fact-card" style="border-color: var(--bio-color);">
+                <div class="fact-header"><span class="fact-icon">🦠</span> <h3>Biology</h3></div>
+                <p><strong>Mitochondria:</strong> The Battery/Powerhouse.</p>
+                <p><strong>Nucleus:</strong> The Brain/Control.</p>
+                <p><strong>Plants:</strong> Have a Wall 🧱 & Chloroplasts ☀️.</p>
             </div>
 
-            <!-- Biology -->
-            <div class="concept-card border-bio">
-                <h3 style="color:var(--accent-bio); margin-top:0;">🦠 Biology: Cells</h3>
-                <ul style="padding-left: 20px;">
-                    <li><strong>Mitochondria:</strong> Powerhouse (Energy).</li>
-                    <li><strong>Nucleus:</strong> Brain (DNA/Control).</li>
-                    <li><strong>Plant Cells Only:</strong> Cell Wall & Chloroplasts.</li>
-                    <li><strong>Mitosis Order:</strong> PMAT (Prophase, Metaphase, Anaphase, Telophase).</li>
-                </ul>
+            <div class="fact-card" style="border-color: var(--elec-color);">
+                <div class="fact-header"><span class="fact-icon">⚡</span> <h3>Electricity</h3></div>
+                <div class="formula-box">V = I × R</div>
+                <p><strong>Series:</strong> One path (All break if one breaks).</p>
+                <p><strong>Insulator:</strong> Stops flow (Rubber, Glass).</p>
             </div>
 
-            <!-- Astronomy -->
-            <div class="concept-card border-astro">
-                <h3 style="color:var(--accent-astro); margin-top:0;">🪐 Astronomy: Basics</h3>
-                <ul style="padding-left: 20px;">
-                    <li><strong>Rotation:</strong> Earth spinning (24 hours = Day/Night).</li>
-                    <li><strong>Revolution:</strong> Earth orbiting Sun (365 days = Year).</li>
-                    <li><strong>Order:</strong> Mercury, Venus, Earth, Mars, Jupiter, Saturn, Uranus, Neptune.</li>
-                </ul>
+            <div class="fact-card" style="border-color: var(--astro-color);">
+                <div class="fact-header"><span class="fact-icon">🪐</span> <h3>Astronomy</h3></div>
+                <p><strong>Jupiter:</strong> King of planets (Largest).</p>
+                <p><strong>Rotation:</strong> Day & Night (24h).</p>
+                <p><strong>Revolution:</strong> Seasons/Year (365d).</p>
             </div>
         </div>
     </div>
 
-    <!-- GAME AREA -->
+    <!-- GAME SCREEN -->
     <div id="screen-game" class="hidden">
-        <button class="back-btn" onclick="showScreen('screen-menu')">← Quit Game</button>
+        <div class="hud">
+            <button class="back-btn" onclick="showScreen('screen-menu')" style="margin:0;">✕ Quit</button>
+            <span class="score-pill" id="score-display">XP: 0</span>
+        </div>
         
-        <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
-            <span id="score-display">Score: 0</span>
-            <span id="question-count">Q: 1</span>
+        <div class="progress-container">
+            <div id="progress-bar" class="progress-fill"></div>
         </div>
 
         <div id="game-content">
-            <span id="unit-badge" class="unit-badge" style="background: white;">Loading...</span>
-            <div id="question-text" class="question-text">Question text...</div>
+            <div class="question-card">
+                <span id="q-icon" class="visual-icon">❓</span>
+                <span id="unit-badge" class="unit-badge">UNIT</span>
+                <div id="question-text" class="question-text">Question...</div>
+            </div>
+            
             <div id="options-container" class="options-list"></div>
-            <div id="feedback" class="feedback-box"></div>
-            <button id="next-btn" class="next-btn hidden" onclick="nextQuestion()">Next Question</button>
+            
+            <div id="feedback" class="feedback-box hidden"></div>
+            <button id="next-btn" class="next-btn hidden" onclick="nextQuestion()">Next Level →</button>
         </div>
     </div>
 
 </div>
 
 <script>
-    // --- DATA: QUESTION BANK ---
+    // --- VISUAL CONFIGURATION ---
+    const THEMES = {
+        'Chemistry': { color: '#00f2ff', icon: '🧪' },
+        'Biology': { color: '#00ff88', icon: '🦠' },
+        'Astronomy': { color: '#bd00ff', icon: '🪐' },
+        'Electricity': { color: '#ffaa00', icon: '⚡' }
+    };
+
+    // --- QUESTION BANK ---
     const questions = [
         // CHEMISTRY
-        { unit: "Chemistry", color: "#4facfe", q: "A block has Mass = 50g and Volume = 10cm³. What is its Density?", options: ["500 g/cm³", "5 g/cm³", "0.2 g/cm³", "40 g/cm³"], ans: "5 g/cm³", reason: "Density = Mass ÷ Volume (50 ÷ 10 = 5)." },
-        { unit: "Chemistry", color: "#4facfe", q: "Dry Ice turning directly into gas (smoke) is an example of:", options: ["Melting", "Evaporation", "Sublimation", "Deposition"], ans: "Sublimation", reason: "Sublimation is the jump from Solid straight to Gas." },
-        { unit: "Chemistry", color: "#4facfe", q: "Which of these is a CHEMICAL change?", options: ["Iron Rusting", "Ice Melting", "Sugar Dissolving", "Glass Breaking"], ans: "Iron Rusting", reason: "Rust creates a new substance (Iron Oxide). The others are physical changes." },
-        { unit: "Chemistry", color: "#4facfe", q: "Chocolate Chip Cookie Dough is classified as a:", options: ["Homogeneous Mixture", "Heterogeneous Mixture", "Element", "Pure Substance"], ans: "Heterogeneous Mixture", reason: "You can see the different parts (chips vs. dough), so it's Heterogeneous." },
+        { unit: "Chemistry", q: "Mass = 50g, Vol = 10cm³. Density?", options: ["5 g/cm³", "500 g/cm³", "0.2 g/cm³", "100 g/cm³"], ans: "5 g/cm³", reason: "Formula: D = M ÷ V" },
+        { unit: "Chemistry", q: "Dry Ice turning to smoke is:", options: ["Sublimation", "Melting", "Evaporation", "Freezing"], ans: "Sublimation", reason: "Solid ➔ Gas is Sublimation." },
+        { unit: "Chemistry", q: "Which is a CHEMICAL change?", options: ["Rusting Iron", "Melting Ice", "Breaking Glass", "Boiling Water"], ans: "Rusting Iron", reason: "Rust creates a NEW substance." },
         
         // BIOLOGY
-        { unit: "Biology", color: "#43e97b", q: "Which organelle is the 'Powerhouse' of the cell?", options: ["Nucleus", "Mitochondria", "Ribosome", "Vacuole"], ans: "Mitochondria", reason: "Mitochondria perform cellular respiration to create energy." },
-        { unit: "Biology", color: "#43e97b", q: "Which phase of Mitosis comes first?", options: ["Metaphase", "Telophase", "Prophase", "Anaphase"], ans: "Prophase", reason: "Remember PMAT: Prophase is the first stage." },
-        { unit: "Biology", color: "#43e97b", q: "Plant cells have this, but Animal cells do not:", options: ["Nucleus", "Cell Membrane", "Cell Wall", "Cytoplasm"], ans: "Cell Wall", reason: "Plants need a rigid Cell Wall for structure. Animals only have a membrane." },
+        { unit: "Biology", q: "The 'Powerhouse' of the cell:", options: ["Mitochondria", "Nucleus", "Ribosome", "Vacuole"], ans: "Mitochondria", reason: "It creates energy for the cell." },
+        { unit: "Biology", q: "First phase of Mitosis?", options: ["Prophase", "Metaphase", "Anaphase", "Telophase"], ans: "Prophase", reason: "PMAT: Prophase is #1." },
+        { unit: "Biology", q: "Found in Plants but NOT Animals:", options: ["Cell Wall", "Nucleus", "Mitochondria", "Membrane"], ans: "Cell Wall", reason: "Plants need rigid walls for structure." },
 
         // ASTRONOMY
-        { unit: "Astronomy", color: "#a18cd1", q: "What causes Day and Night on Earth?", options: ["Earth orbiting the Sun", "The Moon blocking the Sun", "Earth rotating on its axis", "The Sun turning off"], ans: "Earth rotating on its axis", reason: "Rotation takes 24 hours and causes day/night cycles." },
-        { unit: "Astronomy", color: "#a18cd1", q: "Which planet is the largest in our solar system?", options: ["Earth", "Saturn", "Jupiter", "Mars"], ans: "Jupiter", reason: "Jupiter is the gas giant king of the solar system." },
+        { unit: "Astronomy", q: "Cause of Day & Night?", options: ["Rotation", "Revolution", "Orbit", "Gravity"], ans: "Rotation", reason: "Earth spins on its axis every 24h." },
+        { unit: "Astronomy", q: "Largest Planet?", options: ["Jupiter", "Saturn", "Sun", "Earth"], ans: "Jupiter", reason: "The Gas Giant is the biggest." },
         
         // ELECTRICITY
-        { unit: "Electricity", color: "#ff9a9e", q: "Calculate Voltage if Current(I) = 3A and Resistance(R) = 4Ω.", options: ["12 V", "0.75 V", "7 V", "1.3 V"], ans: "12 V", reason: "Ohm's Law: V = I × R (3 × 4 = 12)." },
-        { unit: "Electricity", color: "#ff9a9e", q: "In which circuit does one broken bulb turn OFF all the others?", options: ["Parallel", "Series", "Short Circuit", "Open Circuit"], ans: "Series", reason: "In Series, there is only one path. If it breaks, flow stops." },
-        { unit: "Electricity", color: "#ff9a9e", q: "A material that prevents electron flow (like rubber) is an:", options: ["Conductor", "Insulator", "Resistor", "Battery"], ans: "Insulator", reason: "Insulators hold onto their electrons tightly." }
+        { unit: "Electricity", q: "V=IxR. If I=3A, R=4Ω, V=?", options: ["12 V", "7 V", "1.3 V", "0.75 V"], ans: "12 V", reason: "Multiply: 3 x 4 = 12." },
+        { unit: "Electricity", q: "Stops electron flow:", options: ["Insulator", "Conductor", "Battery", "Wire"], ans: "Insulator", reason: "Rubber and glass are Insulators." }
     ];
 
-    // --- GAME LOGIC ---
-    let currentQIndex = 0;
     let score = 0;
-    let currentQuestion = null;
+    let currentQ = {};
 
-    function showScreen(screenId) {
-        document.querySelectorAll('.container > div').forEach(div => div.classList.add('hidden'));
-        document.getElementById(screenId).classList.remove('hidden');
+    function showScreen(id) {
+        document.querySelectorAll('.container > div').forEach(d => d.classList.add('hidden'));
+        document.getElementById(id).classList.remove('hidden');
+        if(id === 'screen-menu') resetTheme();
+    }
+
+    function resetTheme() {
+        document.documentElement.style.setProperty('--current-glow', '#ffffff');
+        document.getElementById('main-container').style.boxShadow = "0 0 20px rgba(0,0,0,0.5), 0 0 0 2px #555";
     }
 
     function startGame() {
         score = 0;
-        currentQIndex = 0;
-        document.getElementById('score-display').innerText = "Score: 0";
+        document.getElementById('score-display').innerText = "XP: 0";
         showScreen('screen-game');
         nextQuestion();
     }
 
     function nextQuestion() {
         // Reset UI
-        document.getElementById('feedback').style.display = 'none';
+        document.getElementById('feedback').classList.add('hidden');
         document.getElementById('next-btn').classList.add('hidden');
         document.getElementById('options-container').innerHTML = '';
-        
-        // Pick random question
-        currentQuestion = questions[Math.floor(Math.random() * questions.length)];
-        
-        // Update UI
-        currentQIndex++;
-        document.getElementById('question-count').innerText = "Q: " + currentQIndex;
-        
-        const badge = document.getElementById('unit-badge');
-        badge.innerText = currentQuestion.unit;
-        badge.style.background = currentQuestion.color;
-        
-        document.getElementById('question-text').innerText = currentQuestion.q;
+        document.getElementById('main-container').classList.remove('shake-anim');
 
-        // Shuffle options
-        const shuffledOptions = [...currentQuestion.options].sort(() => Math.random() - 0.5);
+        // Pick Random
+        currentQ = questions[Math.floor(Math.random() * questions.length)];
+        
+        // APPLY VISUAL THEME
+        const theme = THEMES[currentQ.unit];
+        document.documentElement.style.setProperty('--current-glow', theme.color);
+        document.getElementById('q-icon').innerText = theme.icon;
+        document.getElementById('unit-badge').innerText = currentQ.unit;
+        
+        // Update Content
+        document.getElementById('question-text').innerText = currentQ.q;
+        document.getElementById('progress-bar').style.width = Math.min((score / 100) * 100, 100) + "%";
 
-        shuffledOptions.forEach(opt => {
+        // Generate Buttons
+        const opts = [...currentQ.options].sort(() => Math.random() - 0.5);
+        opts.forEach(opt => {
             const btn = document.createElement('button');
             btn.className = 'option-btn';
             btn.innerText = opt;
-            btn.onclick = () => checkAnswer(opt, btn);
+            btn.onclick = () => checkAnswer(opt, btn, theme.color);
             document.getElementById('options-container').appendChild(btn);
         });
     }
 
-    function checkAnswer(selected, btnElement) {
-        // Disable all buttons
-        const allBtns = document.querySelectorAll('.option-btn');
-        allBtns.forEach(b => b.disabled = true);
-
+    function checkAnswer(selected, btn, color) {
+        const isCorrect = selected === currentQ.ans;
         const feedback = document.getElementById('feedback');
-        feedback.style.display = 'block';
+        
+        // Disable buttons
+        document.querySelectorAll('.option-btn').forEach(b => {
+            b.disabled = true;
+            b.style.opacity = "0.5";
+        });
 
-        if (selected === currentQuestion.ans) {
-            score += 10;
-            document.getElementById('score-display').innerText = "Score: " + score;
-            feedback.className = "feedback-box feedback-correct";
-            feedback.innerHTML = `<strong>Correct!</strong> ${currentQuestion.reason}`;
-            btnElement.style.background = "rgba(67, 233, 123, 0.4)";
-            btnElement.style.borderColor = "#43e97b";
-        } else {
-            feedback.className = "feedback-box feedback-wrong";
-            feedback.innerHTML = `<strong>Incorrect.</strong> The correct answer was <u>${currentQuestion.ans}</u>.<br><br>${currentQuestion.reason}`;
-            btnElement.style.background = "rgba(255, 99, 99, 0.4)";
-            btnElement.style.borderColor = "#ff6b6b";
-        }
-
+        feedback.classList.remove('hidden');
         document.getElementById('next-btn').classList.remove('hidden');
+
+        if (isCorrect) {
+            score += 10;
+            document.getElementById('score-display').innerText = "XP: " + score;
+            
+            // Visuals
+            btn.style.opacity = "1";
+            btn.style.background = "rgba(255,255,255,0.2)";
+            btn.style.borderColor = color;
+            btn.style.boxShadow = `0 0 15px ${color}`;
+            
+            feedback.className = "feedback-box feedback-correct";
+            feedback.innerHTML = `<strong>✅ CORRECT!</strong><br>${currentQ.reason}`;
+            document.getElementById('progress-bar').style.width = Math.min((score / 100) * 100, 100) + "%";
+        } else {
+            // Shake Effect
+            document.getElementById('main-container').classList.add('shake-anim');
+            
+            btn.style.opacity = "1";
+            btn.style.background = "rgba(255,50,50,0.2)";
+            btn.style.borderColor = "#ff4444";
+            
+            feedback.className = "feedback-box feedback-wrong";
+            feedback.innerHTML = `<strong>❌ MISSED IT.</strong><br>Answer: ${currentQ.ans}<br>${currentQ.reason}`;
+        }
     }
 </script>
 
